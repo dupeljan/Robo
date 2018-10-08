@@ -1,9 +1,9 @@
 #include "calculation.h"
-
+#define PI 3.14159265358979323846
 
 Calculation::Calculation()
 {
-    const int Lcorn(175), Rcorn(315);// Square consts
+    const int Lcorn(179), Rcorn(321);// Square consts
 
     //Calculate sqare points boundary points
     set< pair < int , int > > square;
@@ -13,6 +13,17 @@ Calculation::Calculation()
         square.insert(make_pair(i,Rcorn));
         square.insert(make_pair(i,Lcorn));
      }
+
+    const double alpha = PI / 6;
+    int radius = (Lcorn + Rcorn) / 4;
+    set< pair < int , int > > rot_square;
+    // Rotate points
+    for (  set< pair < int , int > >::iterator it = square.begin(); it != square.end(); it++ ){
+            int x = ( it->first + radius ) * cos(alpha) - ( it->second + radius ) * sin(alpha);
+            int y = ( it->first + radius ) * sin(alpha) + ( it->second + radius ) * cos(alpha);
+            rot_square.insert(make_pair(x,y));
+    }
+   square = rot_square;
 
     const int diam(41); // Robot const
     //Calculate cicle points
