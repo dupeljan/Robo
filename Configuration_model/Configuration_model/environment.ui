@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Widget</class>
- <widget class="QWidget" name="Widget">
+ <class>Environment</class>
+ <widget class="QWidget" name="Environment">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Widget</string>
+   <string>Environment</string>
   </property>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
