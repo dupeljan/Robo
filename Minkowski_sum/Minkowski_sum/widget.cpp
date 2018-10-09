@@ -3,6 +3,10 @@
 #include <QBrush>
 #include <QRect>
 #include <math.h>
+#include <QPoint>
+#include <QPolygon>
+#include <Qt>
+#include <algorithm>
 
 
 Widget::Widget(QWidget *parent) :
@@ -56,6 +60,7 @@ void Widget::paintEvent(QPaintEvent *event)
     QRect rect(1,1,500,500);
     painter.drawRect(rect);
     */
+    // Draw sets
     for ( int i = 0; i < points_instanse.size(); i++ ){
         QPen myPen(points_instanse[i].second);
         painter.setPen(myPen);
@@ -63,4 +68,17 @@ void Widget::paintEvent(QPaintEvent *event)
             painter.drawPoint(it->first,it->second);
         }
     }
+    // Draw polylines
+
+    for ( int i = 0; i < polyline_instanse.size(); i++ ){
+        QPen myPen(polyline_instanse[i].second);
+        painter.setPen(myPen);
+        painter.setBrush(QBrush(polyline_instanse[i].second, Qt::SolidPattern));
+        QPolygon polygon;
+        swap(polyline_instanse[i].first[2], polyline_instanse[i].first[3]);
+        for ( int j = 0; j < polyline_instanse[i].first.size(); j++ )
+            polygon << QPoint( polyline_instanse[i].first[j].first , polyline_instanse[i].first[j].second );
+        painter.drawPolygon(polygon);
+   }
+
 }

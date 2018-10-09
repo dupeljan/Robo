@@ -1,5 +1,6 @@
 #include "calculation.h"
 #include <iostream>
+#include <vector>
 #define PI 3.14159265358979323846
 
 Calculation::Calculation()
@@ -30,13 +31,18 @@ Calculation::Calculation()
             int y = ( it->first - centre ) * sin(alpha) + ( it->second - centre ) * cos(alpha) +0.5;
             x += centre;
             y += centre;
-            rot_obstacle.insert(make_pair(x  ,y ));
+            if (  it->first == Lcorn && it->second == Lcorn  ||
+                  it->first == Lcorn && it->second == Rcorn  ||
+                  it->first == Rcorn && it->second == Lcorn  ||
+                  it->first == Rcorn && it->second == Rcorn
+                  )
+                polyline_points.push_back(make_pair(x,y));
+            rot_obstacle.insert(make_pair(x,y));
     }
    obstacle = rot_obstacle;
 
     const int diam(41); // Robot const
     //Calculate cicle points
-
     int r = diam / 2;   // radius
     for (int x = -r ; x <= r; x++)
         for (int y = -r ; y <= r; y++ )
