@@ -15,12 +15,12 @@ Calculation::Calculation()
      }
 
     const double alpha = PI / 6;
-    int radius = (Lcorn + Rcorn) / 4;
+    int centre = (Lcorn + Rcorn) / 2;
     set< pair < int , int > > rot_square;
     // Rotate points
     for (  set< pair < int , int > >::iterator it = square.begin(); it != square.end(); it++ ){
-            int x = ( it->first + radius ) * cos(alpha) - ( it->second + radius ) * sin(alpha);
-            int y = ( it->first + radius ) * sin(alpha) + ( it->second + radius ) * cos(alpha);
+            int x = ( it->first + centre ) * cos(alpha) - ( it->second ) * sin(alpha);
+            int y = ( it->first - centre ) * sin(alpha) + ( it->second ) * cos(alpha);
             rot_square.insert(make_pair(x,y));
     }
    square = rot_square;
