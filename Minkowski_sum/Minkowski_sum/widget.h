@@ -5,6 +5,7 @@
 #include <QtGui>
 #include <set>
 #include <utility>
+#include <QColor>
 
 using namespace std;
 namespace Ui {
@@ -15,12 +16,12 @@ class Widget : public QWidget
 {
     Q_OBJECT
 private:
-    std::set < pair < int , int > > points_instanse;
+    vector < pair < set < pair < int , int > > , QColor > > points_instanse;
 protected:
     void paintEvent(QPaintEvent *event);
 public:
     explicit Widget(QWidget *parent = 0);
-    void set_points(set< pair < int , int > > p) { points_instanse = p;}
+    void add_points(set< pair < int , int > > p , QColor collor) { points_instanse.push_back( make_pair( p , collor) ); }
     ~Widget();
 
 private:

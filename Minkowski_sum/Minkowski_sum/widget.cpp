@@ -56,7 +56,11 @@ void Widget::paintEvent(QPaintEvent *event)
     QRect rect(1,1,500,500);
     painter.drawRect(rect);
     */
-    for ( set< pair < int , int > >::iterator i = points_instanse.begin(); i != points_instanse.end(); i++ ){
-        painter.drawPoint(i->first,i->second);
+    for ( int i = 0; i < points_instanse.size(); i++ ){
+        QPen myPen(points_instanse[i].second);
+        painter.setPen(myPen);
+        for ( set< pair < int , int > >::iterator it = points_instanse[i].first.begin(); it !=points_instanse[i].first.end(); it++ ){
+            painter.drawPoint(it->first,it->second);
+        }
     }
 }

@@ -26,7 +26,7 @@ public:
     {
         if (Widget->objectName().isEmpty())
             Widget->setObjectName(QStringLiteral("Widget"));
-        Widget->resize(400, 300);
+        Widget->resize(400, 400);
 
         retranslateUi(Widget);
 
