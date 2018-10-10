@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     e.add_rectange(QRect(70,70,130,130),QColor(128,194,255));
     e.calculate_Minkowski_sum(QColor(0,0,255));
    // e.add_rectange(QRect(200,50,271,73),QColor(255,0,0));
-    e.generate_random_points_set(10,30,QColor(255,0,0));
+    e.generate_random_points_set(30,40,QColor(255,0,0));// optimal 20 20
     e.show();
 
     return a.exec();

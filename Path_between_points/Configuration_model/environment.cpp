@@ -102,7 +102,7 @@ void Environment::generate_random_points_set(int count, double delta, QColor col
     random_points.clear();
     bool skip = false;
 
-    for( int i = 0 ; i < count;){
+    for( int i = 0 ; i < count && free_points.size();){
         // Compute rand_number from free_set
         int rand_number = qrand() % free_points.size();
         // Get point N rand_number from free_set
@@ -116,11 +116,13 @@ void Environment::generate_random_points_set(int count, double delta, QColor col
             random_points.insert(cur_point);
             i++;
         }
+        free_points.remove(cur_point);
+        skip = false;
 
     }
     //Draw it
     set_source.push_back(make_pair(random_points, color ));
-
+    cout << random_points.size() << " random points found\n" << free_points.size() << " free elements left";
 }
 
 void Environment::paintEvent(QPaintEvent *event){
