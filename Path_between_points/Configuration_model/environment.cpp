@@ -41,7 +41,7 @@ Environment::Environment(QRect rect, QPoint shift, QColor color, QWidget *parent
     // QRect new_rect( rect.x() + shift.x() , rect.width() + shift.x() , rect.y() + shift.y() ,rect.height() + shift.y() );
 
 
-     robot.first = create_filled_rect(rect);
+    robot.first = create_filled_rect(rect);
 
     robot.second = color;
 }
@@ -99,7 +99,7 @@ void Environment::generate_random_points_set(int count, double delta, QColor col
     // Create random set
     QTime midnight(0,0,0);
     qsrand(midnight.secsTo(QTime::currentTime()));
-    random_points.clear();
+    material_points.clear();
     bool skip = false;
 
     for( int i = 0 ; i < count && free_points.size();){
@@ -108,12 +108,12 @@ void Environment::generate_random_points_set(int count, double delta, QColor col
         // Get point N rand_number from free_set
         QPoint cur_point = *next(free_points.begin(),rand_number);
         // Expect lenght between points
-        for( QSet < QPoint > :: iterator it = random_points.begin(); it != random_points.end() && !skip; it++)
+        for( QSet < QPoint > :: iterator it = material_points.begin(); it != material_points.end() && !skip; it++)
             if ( sqrt( pow(it->x() - cur_point.x() , 2) + pow(it->y() - cur_point.y() , 2) ) <= delta)
                 skip = true;
 
         if( ! skip ){
-            random_points.insert(cur_point);
+            material_points.insert(cur_point);
             i++;
         }
         free_points.remove(cur_point);
@@ -121,10 +121,28 @@ void Environment::generate_random_points_set(int count, double delta, QColor col
 
     }
     //Draw it
-    set_source.push_back(make_pair(random_points, color ));
-    cout << random_points.size() << " random points found\n" << free_points.size() << " free elements left";
+    set_source.push_back(make_pair(material_points, color));
+    cout << material_points.size() << " random points found\n" << free_points.size() << " free elements left";
 }
 
+void Environment::generate_grid(int len_x, int len_y, QPoint left_corner, QColor color){
+/*  Good params for exiting plot (30,30,QPoint(0,0),QColor(255,0,0))
+                                 (20,20,QPoint(0,0),QColor(255,0,0))
+*/
+    //Got all blockade points
+    QSet < QPoint > ocupate_points;
+    for ( int i = 0; i < set_source.size(); i++)
+        for ( QSet < QPoint > :: iterator it = set_source[i].first.begin(); it != set_source[i].first.end(); it++ )
+            ocupate_points.insert(*it);
+    // Compute grid
+    material_points.clear();
+    for( int x = left_corner.x(); x <= SCR_LEN_X - left_corner.x() ; x += len_x)
+        for( int y = left_corner.y(); y <= SCR_LEN_Y - left_corner.y(); y += len_y)
+            if( ocupate_points.find(QPoint(x,y)) == ocupate_points.end())
+                material_points.insert(QPoint(x,y));
+    // Draw grid
+    set_source.push_back(make_pair(material_points,color));
+}
 void Environment::paintEvent(QPaintEvent *event){
 
     QPainter painter(this);

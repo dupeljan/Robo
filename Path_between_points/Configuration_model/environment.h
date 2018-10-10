@@ -25,7 +25,7 @@ class Environment : public QWidget
     Q_OBJECT
 private:
     //vector < tuple < QPoint , int, QColor > > circle_polygon; // vector < pair < centre , rad, color > >
-    QSet < QPoint > random_points;
+    QSet < QPoint > material_points;
     vector < QSet < QPoint > >  edge_source;
     vector < pair < QSet < QPoint >, QColor > > set_source;
    // vector < pair < QRect , QColor > > rectangle_polygon;
@@ -40,6 +40,7 @@ public:
     void add_hollow_rect(QRect rect, QColor color);
     void calculate_Minkowski_sum(QColor color);
     void generate_random_points_set(int count, double delta, QColor color);
+    void generate_grid(int len_x, int len_y, QPoint left_corner, QColor color);
 private:
     QSet<QPoint> create_rect_edges(QRect rect);
     QSet<QPoint> create_circle_edges(QPoint centre, int radius);
