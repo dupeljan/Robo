@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <QHash>
 #include <iostream>
+#include <QTime>
 
 // Funct for using QSet<QPoint>
 inline uint qHash (const QPoint & key){
@@ -83,6 +84,47 @@ void Environment::calculate_Minkowski_sum(QColor color){
     set_source.insert(set_source.begin(),sum);
     //set_source.push_back(sum);
 }
+
+void Environment::generate_random_points_set(int count, double delta, QColor color){
+    //Got all blockade points
+    QSet < QPoint > all_points;
+    for ( int i = 0; i < set_source.size(); i++)
+        for ( QSet < QPoint > :: iterator it = set_source[i].first.begin(); it != set_source[i].first.end(); it++ )
+            all_points.insert(*it);
+
+    // Create random set
+    QTime midnight(0,0,0);
+    qsrand(midnight.secsTo(QTime::currentTime()));
+    random_points.clear();
+    bool skip = false;
+
+    for( int i = 0 ; i < count;){
+        QPoint rand_p;
+
+        rand_p.setX( qrand() % SCR_LEN_X );
+
+        rand_p.setY( qrand() % SCR_LEN_Y );
+        // Lenght between points
+        for( QSet < QPoint > :: iterator it = random_points.begin(); it != random_points.end() && !skip; it++)
+            if ( sqrt( pow(it->x() - rand_p.x() , 2) + pow(it->y() - rand_p.y() , 2) ) <= delta)
+                skip = true;
+
+        // Not in substickles
+        for( QSet < QPoint > :: iterator it = all_points.begin(); it != all_points.end() && !skip; it++)
+            if ( *it == rand_p )
+                skip = true;
+        if( ! skip ){
+            random_points.insert(rand_p);
+            i++;
+        }
+
+    }
+    //Draw it
+    set_source.push_back(make_pair(random_points, color ));
+    cout<<random_points.size();
+
+}
+
 void Environment::paintEvent(QPaintEvent *event){
 
     QPainter painter(this);
@@ -120,7 +162,6 @@ QSet <QPoint> Environment::create_rect_edges(QRect rect){
 
 QSet <QPoint> Environment::create_filled_rect(QRect rect){
     QSet < QPoint > rectangle;
-    cout << rect.y() << '|' << rect.height();
     for( int x = rect.x(); x <= rect.width(); x++)
         for ( int y = rect.y(); y <= rect.height(); y++)
             rectangle.insert(QPoint(x,y));
@@ -152,3 +193,5 @@ QSet <QPoint> Environment::create_circle_edges(QPoint centre, int radius){
             }
     return circle;
 }
+
+
