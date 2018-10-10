@@ -86,11 +86,15 @@ void Environment::calculate_Minkowski_sum(QColor color){
 }
 
 void Environment::generate_random_points_set(int count, double delta, QColor color){
-    //Got all blockade points
-    QSet < QPoint > all_points;
+    // Get all points
+    QSet < QPoint > free_points;
+    for( int x = 0; x <= SCR_LEN_X;x++)
+        for ( int y = 0; y <= SCR_LEN_Y; y++)
+            free_points.insert(QPoint(x,y));
+    //delete all blockade points
     for ( int i = 0; i < set_source.size(); i++)
         for ( QSet < QPoint > :: iterator it = set_source[i].first.begin(); it != set_source[i].first.end(); it++ )
-            all_points.insert(*it);
+            free_points.remove(*it);
 
     // Create random set
     QTime midnight(0,0,0);
@@ -99,29 +103,23 @@ void Environment::generate_random_points_set(int count, double delta, QColor col
     bool skip = false;
 
     for( int i = 0 ; i < count;){
-        QPoint rand_p;
-
-        rand_p.setX( qrand() % SCR_LEN_X );
-
-        rand_p.setY( qrand() % SCR_LEN_Y );
-        // Lenght between points
+        // Compute rand_number from free_set
+        int rand_number = qrand() % free_points.size();
+        // Get point N rand_number from free_set
+        QPoint cur_point = *next(free_points.begin(),rand_number);
+        // Expect lenght between points
         for( QSet < QPoint > :: iterator it = random_points.begin(); it != random_points.end() && !skip; it++)
-            if ( sqrt( pow(it->x() - rand_p.x() , 2) + pow(it->y() - rand_p.y() , 2) ) <= delta)
+            if ( sqrt( pow(it->x() - cur_point.x() , 2) + pow(it->y() - cur_point.y() , 2) ) <= delta)
                 skip = true;
 
-        // Not in substickles
-        for( QSet < QPoint > :: iterator it = all_points.begin(); it != all_points.end() && !skip; it++)
-            if ( *it == rand_p )
-                skip = true;
         if( ! skip ){
-            random_points.insert(rand_p);
+            random_points.insert(cur_point);
             i++;
         }
 
     }
     //Draw it
     set_source.push_back(make_pair(random_points, color ));
-    cout<<random_points.size();
 
 }
 
