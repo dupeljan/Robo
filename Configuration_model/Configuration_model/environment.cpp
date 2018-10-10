@@ -15,7 +15,7 @@ Environment::Environment(int robot_radius, QPoint shift, QColor color, QWidget *
 {
     ui->setupUi(this);
 
-/*
+
 
     // Add robot in environment
     // Set Robot collor
@@ -28,8 +28,13 @@ Environment::Environment(int robot_radius, QPoint shift, QColor color, QWidget *
                 y += shift.y();
                 robot.first.insert(QPoint(x,y));
             }
-*/
+
 }
+Environment::Environment(QRect rect, QColor color, QWidget *parent /* = 0 */){
+    robot.first = create_rect_edges(rect);
+    robot.second = color;
+}
+
 
 Environment::~Environment()
 {
@@ -38,19 +43,11 @@ Environment::~Environment()
 
 
 void Environment::add_rectange(QRect rect, QColor color){
-    set < QPoint > rectangle;
-    //Create rectanle edges
-    for( int x = rect.x() ; x <= rect.width(); x++ ){
-        rectangle.insert(QPoint(x,rect.y()));
-        rectangle.insert(QPoint(x,rect.height()));
-    }
 
-    for( int y = rect.y() ; y <= rect.height(); y++ ){
-        rectangle.insert(QPoint(rect.x(),y));
-        rectangle.insert(QPoint(rect.height(),y));
-    }
+    //Create rectanle edges
+    //create_rect_edges(QRect rect)
     //Add rect edges
-    set_source.push_back(make_pair(rectangle,color));
+    set_source.push_back(make_pair(create_rect_edges(rect),color));
     //Add rect polygon
     rectangle_polygon.push_back(make_pair(rect,color));
 
@@ -74,4 +71,17 @@ void Environment::paintEvent(QPaintEvent *event){
 
     QPainter painter(this);
 
+}
+set <QPoint> Environment::create_rect_edges(QRect rect){
+    set < QPoint > rectangle;
+    for( int x = rect.x() ; x <= rect.width(); x++ ){
+        rectangle.insert(QPoint(x,rect.y()));
+        rectangle.insert(QPoint(x,rect.height()));
+    }
+
+    for( int y = rect.y() ; y <= rect.height(); y++ ){
+        rectangle.insert(QPoint(rect.x(),y));
+        rectangle.insert(QPoint(rect.height(),y));
+    }
+    return rectangle;
 }

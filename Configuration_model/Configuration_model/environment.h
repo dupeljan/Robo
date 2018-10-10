@@ -27,11 +27,12 @@ private:
     pair < set < QPoint >, QColor > sum;  // Minkowski sum
 public:
     explicit Environment(int robot_radius, QPoint shift, QColor color, QWidget *parent /*= 0*/);
-    //explicit Environment(int robot_radius, QPoint shift, QColor color, QWidget *parent = 0);
+    explicit Environment(QRect rect, QColor color, QWidget *parent = 0);
     ~Environment();
     void add_rectange(QRect rect, QColor color);
     void add_circle(QPoint centre,int radius , QColor color);
 private:
+    set < QPoint > create_rect_edges(QRect rect);
     Ui::Environment *ui;
 protected:
     void paintEvent(QPaintEvent *event);
