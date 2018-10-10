@@ -41,8 +41,10 @@ Environment::Environment(QRect rect, QColor color, QWidget *parent /* = 0 */):
     ui(new Ui::Environment)
 {
      ui->setupUi(this);
+    for( int x = rect.x(); x <= rect.width(); x++)
+        for ( int y = rect.y(); y <= rect.height(); y++)
+            robot.first.insert(QPoint(x,y));
 
-    robot.first = create_rect_edges(rect);
     robot.second = color;
 }
 
@@ -53,7 +55,7 @@ Environment::~Environment()
 }
 
 
-void Environment::add_rectange(QRect rect, QColor color){
+void Environment::add_rectange_adge(QRect rect, QColor color){
 
     //Create rectanle edges
     //create_rect_edges(QRect rect)
@@ -94,6 +96,28 @@ void Environment::paintEvent(QPaintEvent *event){
             painter.drawPoint(it->x(),it->y());
         }
     }
+    // Draw rectangle polygon
+    for ( int i = 0; i < rectangle_polygon.size(); i++ ){
+        QPolygon poligon;
+        poligon << QPoint(rectangle_polygon[i].first.x(), rectangle_polygon[i].first.y() )
+                << QPoint(rectangle_polygon[i].first.width(), rectangle_polygon[i].first.y() )//rectangle_polygon[i].first.width()
+                << QPoint(rectangle_polygon[i].first.width(), rectangle_polygon[i].first.height() )//rectangle_polygon[i].first.height();
+                << QPoint(rectangle_polygon[i].first.x(), rectangle_polygon[i].first.height() );//rectangle_polygon[i].first.y()
+        painter.setBrush(QBrush(rectangle_polygon[i].second, Qt::SolidPattern));
+        painter.drawPolygon(polygon);
+     // Draw ciclre polygon
+      for ( int i = 0; i < circle_polygon.size(); i++){
+          int x_centre = get<0>(circle_polygon[i]).x();
+          int x_centre = get<0>(circle_polygon[i]).y();
+          int r = get<1>(circle_polygon[i]);
+          QPolygon poligon;
+          poligon << QPoint(get<0>(circle_polygon))
+                  << rectangle_polygon[i].first.width()
+                  << rectangle_polygon[i].first.y()
+                  << rectangle_polygon[i].first.height();
+        }
+    }
+
 
 }
 
