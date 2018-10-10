@@ -10,8 +10,8 @@
 #include <algorithm>
 #include <QHash>
 
-inline uint qHash (const QPoint & key)
-{
+// Funct for using QSet<QPoint>
+inline uint qHash (const QPoint & key){
     return qHash (QPair<int,int>(key.x(), key.y()) );
 }
 
@@ -27,16 +27,21 @@ Environment::Environment(int robot_radius, QPoint shift, QColor color, QWidget *
     // Set Robot collor
     robot.second = color;
     // Fill set
-    for (int x = -robot_radius ; x <= robot_radius; x++)
-        for (int y = -robot_radius ; y <= robot_radius; y++ )
-            if ( x * x + y * y <= robot_radius*robot_radius ){
-                x += shift.x();
-                y += shift.y();
+    for (int i = -robot_radius ; i <= robot_radius; i++)
+        for (int j = -robot_radius ; j <= robot_radius; j++ )
+            if ( i * i + j * j <= robot_radius * robot_radius ){
+                int x = i + shift.x();
+                int y = j + shift.y();
                 robot.first.insert(QPoint(x,y));
             }
 
 }
-Environment::Environment(QRect rect, QColor color, QWidget *parent /* = 0 */){
+Environment::Environment(QRect rect, QColor color, QWidget *parent /* = 0 */):
+    QWidget(parent),
+    ui(new Ui::Environment)
+{
+     ui->setupUi(this);
+
     robot.first = create_rect_edges(rect);
     robot.second = color;
 }
@@ -76,8 +81,22 @@ void Environment::add_circle(QPoint centre, int radius, QColor color){
 void Environment::paintEvent(QPaintEvent *event){
 
     QPainter painter(this);
+    //Draw robot
+    QPen myPen(robot.second);
+    painter.setPen(myPen);
+    for ( QSet <QPoint>::iterator it = robot.first.begin(); it != robot.first.end(); it++ )
+         painter.drawPoint(it->x(),it->y());
+    // Draw sets
+    for ( int i = 0; i < set_source.size(); i++ ){
+        QPen myPen(set_source[i].second);
+        painter.setPen(myPen);
+        for ( QSet< QPoint >::iterator it = set_source[i].first.begin(); it !=set_source[i].first.end(); it++ ){
+            painter.drawPoint(it->x(),it->y());
+        }
+    }
 
 }
+
 QSet <QPoint> Environment::create_rect_edges(QRect rect){
     QSet < QPoint > rectangle;
     for( int x = rect.x() ; x <= rect.width(); x++ ){
@@ -87,7 +106,7 @@ QSet <QPoint> Environment::create_rect_edges(QRect rect){
 
     for( int y = rect.y() ; y <= rect.height(); y++ ){
         rectangle.insert(QPoint(rect.x(),y));
-        rectangle.insert(QPoint(rect.height(),y));
+        rectangle.insert(QPoint(rect.width(),y));
     }
     return rectangle;
 }
