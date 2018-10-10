@@ -8,6 +8,12 @@
 #include <QPolygon>
 #include <Qt>
 #include <algorithm>
+#include <QHash>
+
+inline uint qHash (const QPoint & key)
+{
+    return qHash (QPair<int,int>(key.x(), key.y()) );
+}
 
 Environment::Environment(int robot_radius, QPoint shift, QColor color, QWidget *parent /* = 0*/):
     QWidget(parent),
@@ -54,7 +60,7 @@ void Environment::add_rectange(QRect rect, QColor color){
 }
 
 void Environment::add_circle(QPoint centre, int radius, QColor color){
-    set < QPoint > circle;
+    QSet < QPoint > circle;
     //Create cicle edge
     for( int x = centre.x() - radius; x <= centre.x() + radius; x++)
         for( int y = centre.y() - radius; y <= centre.y() + radius; y++)
@@ -72,8 +78,8 @@ void Environment::paintEvent(QPaintEvent *event){
     QPainter painter(this);
 
 }
-set <QPoint> Environment::create_rect_edges(QRect rect){
-    set < QPoint > rectangle;
+QSet <QPoint> Environment::create_rect_edges(QRect rect){
+    QSet < QPoint > rectangle;
     for( int x = rect.x() ; x <= rect.width(); x++ ){
         rectangle.insert(QPoint(x,rect.y()));
         rectangle.insert(QPoint(x,rect.height()));
