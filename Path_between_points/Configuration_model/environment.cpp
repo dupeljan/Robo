@@ -11,6 +11,7 @@
 #include <QHash>
 #include <iostream>
 #include <QTime>
+#include "Delayn.h"
 
 // Funct for using QSet<QPoint>
 inline uint qHash (const QPoint & key){
@@ -19,7 +20,8 @@ inline uint qHash (const QPoint & key){
 
 Environment::Environment(int robot_radius, QPoint centre, QColor color, QWidget *parent /* = 0*/):
     QWidget(parent),
-    ui(new Ui::Environment)
+    ui(new Ui::Environment),
+    startPoint(QPoint(0,0)), targetPoint(QPoint(0,0))
 {
     ui->setupUi(this);
 
@@ -33,7 +35,8 @@ Environment::Environment(int robot_radius, QPoint centre, QColor color, QWidget 
 }
 Environment::Environment(QRect rect, QPoint shift, QColor color, QWidget *parent /* = 0 */):
     QWidget(parent),
-    ui(new Ui::Environment)
+    ui(new Ui::Environment),
+    startPoint(QPoint(0,0)), targetPoint(QPoint(0,0))
 {
      ui->setupUi(this);
 
@@ -143,6 +146,23 @@ void Environment::generate_grid(int len_x, int len_y, QPoint left_corner, QColor
     // Draw grid
     set_source.push_back(make_pair(material_points,color));
 }
+
+void Environment::set_path_points(QPoint p_startPoint, QPoint p_targetPoint){
+    startPoint = p_startPoint;
+    targetPoint = p_targetPoint;
+}
+
+void Environment::triangulate(){
+
+    std::vector < Delayn::Point < float > > points;
+    // Get appropriate vector
+    for( QSet < QPoint > :: iterator it = material_points.begin(); it != material_points.end(); it++)
+        points.push_back(Delayn::Point< float >(it->x(),it->y()));
+    triangles = Delayn::triangulate<float>(points).edges;
+
+
+}
+
 void Environment::paintEvent(QPaintEvent *event){
 
     QPainter painter(this);
