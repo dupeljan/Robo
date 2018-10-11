@@ -105,6 +105,7 @@ void Environment::paintEvent(QPaintEvent *event){
         polygon << QPoint ( it->e1.p0.x , it->e1.p1.y);
         polygon << QPoint ( it->e2.p0.x , it->e2.p1.y);
         */
+
         painter.drawPolyline(polygon);
     }
 
