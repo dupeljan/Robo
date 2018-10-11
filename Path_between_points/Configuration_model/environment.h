@@ -25,6 +25,7 @@ class Environment : public QWidget
 {
     Q_OBJECT
 private:
+    QSet < pair <QPoint,QPoint> > set_edges;
     QSet < QPoint > material_points;
     vector < QSet < QPoint > >  edge_source;
     vector < pair < QSet < QPoint >, QColor > > set_source;

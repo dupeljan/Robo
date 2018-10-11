@@ -11,12 +11,14 @@
 #include <QHash>
 #include <iostream>
 #include <QTime>
+#include <set>
 #include "Delayn.h"
 
 // Funct for using QSet<QPoint>
 inline uint qHash (const QPoint & key){
     return qHash (QPair<int,int>(key.x(), key.y()) );
 }
+
 
 Environment::Environment(int robot_radius, QPoint centre, QColor color, QWidget *parent /* = 0*/):
     QWidget(parent),
@@ -158,12 +160,16 @@ void Environment::triangulate(){
         points.push_back(Delayn::Point< float >(it->x(),it->y()));
     // Get triangulated edges
     edges = Delayn::triangulate<float>(points).edges;
-    std::vector < Delayn::Edge<float > > edges_buff = edges;
+    //std::vector < Delayn::Edge<float > > edges_buff = edges;
+    // Copy vector to set
+    QSet < pair <QPoint,QPoint> > edges_buff;
+    for( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin(); it != edges.end(); it++ )
+        edges_buff.insert(make_pair(QPoint(it->p0.x , it->p0.y),QPoint( it->p1.x, it->p1.y)));
     // Delete edges which cross obstacles
 
 
     //void line(int x0, int y0, int x1, int y1, TGAColor color) {
-    for ( std::vector<Delayn::Edge<float>> :: iterator it = edges_buff.begin(); it != edges_buff.end(); it++ ){
+    for ( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin(); it != edges.end(); it++ ){
         int x0(it->p0.x), y0(it->p0.y), x1(it->p1.x), y1(it->p1.x);
         bool steep = false;
         bool drop_edge = false;
@@ -198,9 +204,10 @@ void Environment::triangulate(){
         }
     //}
         if ( drop_edge )
-            edges.erase(std::remove(edges.begin(), edges.end(), *it), edges.end());
-    }
+            edges_buff.remove(make_pair(QPoint(it->p0.x , it->p0.y),QPoint( it->p1.x, it->p1.y)));
 
+    }
+    set_edges = edges_buff;
 
 }
 
@@ -222,10 +229,10 @@ void Environment::paintEvent(QPaintEvent *event){
     }
 
     // Draw edges
-    for ( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin() ; it != edges.end(); it++){
+    for ( QSet < pair <QPoint,QPoint> > :: iterator it = set_edges.begin() ; it != set_edges.end(); it++){
         QPolygon polygon;
-        polygon << QPoint(it->p0.x, it->p0.y );
-        polygon << QPoint(it->p1.x, it->p1.y );
+        polygon << QPoint(it->first.x(), it->first.y() );
+        polygon << QPoint(it->second.x(), it->second.y() );
 
         painter.drawPolyline(polygon);
     }

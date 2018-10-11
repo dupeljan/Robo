@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     e.calculate_Minkowski_sum(QColor(128,194,255));
     //e.generate_random_points_set(30,40,QColor(255,0,0));//30 40
     //e.add_rectange(QRect(200,50,271,73),QColor(255,100,0));
-    e.generate_grid(20,20,QPoint(0,0),QColor(255,0,0));
+    e.generate_grid(50,50,QPoint(0,0),QColor(255,0,0));//20 20 (00)
     e.triangulate();
     e.show();
 
