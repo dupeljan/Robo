@@ -44,7 +44,7 @@ void Environment::generate_random_points_set(int count, double delta){
 
     for( int i = 0 ; i < count && free_points.size();){
         // Compute rand_number from free_set
-        QPoint cur_point = QPoint ( qrand() % free_points.size(), qrand() % free_points.size());
+        QPoint cur_point = QPoint ( qrand() % SCR_LEN_X , qrand() % SCR_LEN_Y);
         // Expect lenght between points
         for( QSet < QPoint > :: iterator it = material_points.begin(); it != material_points.end() && !skip; it++)
             if ( sqrt( pow(it->x() - cur_point.x() , 2) + pow(it->y() - cur_point.y() , 2) ) <= delta)
@@ -83,22 +83,28 @@ void Environment::calculate_Delanuei_triang(){
     }
     triangles.push_back(cur_triangle);
     */
-    std::vector < Delayn::Point < int > > points;
+    std::vector < Delayn::Point < float > > points;
     // Get appropriate vector
     for( QSet < QPoint > :: iterator it = material_points.begin(); it != material_points.end(); it++)
-        points.push_back(Delayn::Point< int >(it->x(),it->y()));
-    triangles = Delayn::triangulate(points).triangles;
+        points.push_back(Delayn::Point< float >(it->x(),it->y()));
+    triangles = Delayn::triangulate<float>(points).edges;
+
+
 
 
 }
 
 void Environment::paintEvent(QPaintEvent *event){
     QPainter painter(this);
-    for ( std::vector<Delayn::Triangle<int>> :: iterator it = triangles.begin() ; it != triangles.end(); it++){
+    for ( std::vector<Delayn::Edge<float>> :: iterator it = triangles.begin() ; it != triangles.end(); it++){
         QPolygon polygon;
+        polygon << QPoint(it->p0.x, it->p0.y );
+        polygon << QPoint(it->p1.x, it->p1.y );
+        /*
         polygon << QPoint ( it->e0.p0.x , it->e0.p0.y);
         polygon << QPoint ( it->e1.p0.x , it->e1.p1.y);
         polygon << QPoint ( it->e2.p0.x , it->e2.p1.y);
+        */
         painter.drawPolyline(polygon);
     }
 

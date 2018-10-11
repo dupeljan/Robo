@@ -23,7 +23,7 @@ class Environment : public QWidget
 
 private:
     QSet < QPoint > material_points;
-    std::vector<Delayn::Triangle<int>> triangles;
+    std::vector<Delayn::Edge<float>> triangles;
     QColor color;
 public:
     explicit Environment(QColor color,QWidget *parent = 0);

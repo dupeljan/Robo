@@ -26,7 +26,7 @@ public:
     {
         if (Environment->objectName().isEmpty())
             Environment->setObjectName(QStringLiteral("Environment"));
-        Environment->resize(400, 300);
+        Environment->resize(400, 400);
 
         retranslateUi(Environment);
 
