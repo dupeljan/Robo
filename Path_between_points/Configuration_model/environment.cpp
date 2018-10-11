@@ -162,12 +162,12 @@ void Environment::triangulate(){
     edges = Delayn::triangulate<float>(points).edges;
     //std::vector < Delayn::Edge<float > > edges_buff = edges;
     // Copy vector to set
-    QSet < pair <QPoint,QPoint> > edges_buff;
+   /* QSet < pair <QPoint,QPoint> > edges_buff;
     for( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin(); it != edges.end(); it++ )
         edges_buff.insert(make_pair(QPoint(it->p0.x , it->p0.y),QPoint( it->p1.x, it->p1.y)));
     // Delete edges which cross obstacles
 
-
+    QSet <QPoint > some_set;
     //void line(int x0, int y0, int x1, int y1, TGAColor color) {
     for ( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin(); it != edges.end(); it++ ){
         int x0(it->p0.x), y0(it->p0.y), x1(it->p1.x), y1(it->p1.x);
@@ -190,10 +190,12 @@ void Environment::triangulate(){
         for (int x=x0; x<=x1 && !drop_edge; x++) {
             if (steep) {
                 //image.set(y, x, color);
-                drop_edge = point_in_obstakle(QPoint(y,x));
+                some_set.insert(QPoint(y,x));
+                //drop_edge = point_in_obstakle(QPoint(y,x));
             } else {
                 //image.set(x, y, color);
-                drop_edge = point_in_obstakle(QPoint(x,y));
+                some_set.insert(QPoint(x,y));
+                //drop_edge = point_in_obstakle(QPoint(x,y));
             }
             error2 += derror2;
 
@@ -207,8 +209,9 @@ void Environment::triangulate(){
             edges_buff.remove(make_pair(QPoint(it->p0.x , it->p0.y),QPoint( it->p1.x, it->p1.y)));
 
     }
-    set_edges = edges_buff;
-
+    //set_edges = edges_buff;
+    set_source.push_back(make_pair(some_set,QColor(0,0,0)));
+    */
 }
 
 void Environment::paintEvent(QPaintEvent *event){
@@ -229,10 +232,10 @@ void Environment::paintEvent(QPaintEvent *event){
     }
 
     // Draw edges
-    for ( QSet < pair <QPoint,QPoint> > :: iterator it = set_edges.begin() ; it != set_edges.end(); it++){
+    for ( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin() ; it != edges.end(); it++){
         QPolygon polygon;
-        polygon << QPoint(it->first.x(), it->first.y() );
-        polygon << QPoint(it->second.x(), it->second.y() );
+        polygon << QPoint(it->p0.x, it->p0.y );
+        polygon << QPoint(it->p0.x, it->p0.y );
 
         painter.drawPolyline(polygon);
     }
