@@ -7,6 +7,8 @@
 #include <QPainter>
 #include <QVector>
 #include <QColor>
+#include <vector>
+#include "Delayn.h"
 
 #define SCR_LEN_X 400
 #define SCR_LEN_Y 400
@@ -21,7 +23,7 @@ class Environment : public QWidget
 
 private:
     QSet < QPoint > material_points;
-    QVector < QVector < QPoint > > triangles;
+    std::vector<Delayn::Triangle<int>> triangles;
     QColor color;
 public:
     explicit Environment(QColor color,QWidget *parent = 0);
