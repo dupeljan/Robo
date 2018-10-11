@@ -30,7 +30,7 @@ private:
     vector < pair < QSet < QPoint >, QColor > > set_source;
     pair < QSet <QPoint> , QColor > robot;            //Set A
     pair < QSet < QPoint >, QColor > sum;  // Minkowski sum
-    std::vector<Delayn::Edge<float>> triangles;
+    std::vector<Delayn::Edge<float>> edges;
     QSet < QPoint > ocupate_points;
     QPoint startPoint;
     QPoint targetPoint;
@@ -51,6 +51,7 @@ private:
     QSet<QPoint> create_circle_edges(QPoint centre, int radius);
     QSet<QPoint> create_filled_rect(QRect rect);
     QSet<QPoint> create_filled_circle(QPoint centre, int radius);
+    bool point_in_obstakle(QPoint p);
     void compute_ocupate_points();
     Ui::Environment *ui;
 protected:

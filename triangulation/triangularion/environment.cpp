@@ -64,25 +64,7 @@ void Environment::generate_random_points_set(int count, double delta){
 }
 
 void Environment::calculate_Delanuei_triang(){
-    // Transfor set to vector
-   /* std::vector < double > points;
-    for( QSet < QPoint > :: iterator it = material_points.begin(); it != material_points.end(); it++){
-        points.push_back(it->x());
-        points.push_back(it->y());
-    }
 
-    delaunator::Delaunator d(points);
-    // Got triangles
-    triangles.clear();
-    QVector < QPoint > cur_triangle;
-    for(std::size_t i = 0; i < d.triangles.size(); i+=3){
-        cur_triangle.clear();
-        cur_triangle.push_back(QPoint(d.coords[ 2 * d.triangles[i]] , d.coords[2 * d.triangles[i] + 1]));
-        cur_triangle.push_back(QPoint(d.coords[2 * d.triangles[i + 1]] , d.coords[2 * d.triangles[i + 1] + 1] ));
-        cur_triangle.push_back(QPoint(d.coords[2 * d.triangles[i + 2]] , d.coords[2 * d.triangles[i + 2] + 1] ));
-    }
-    triangles.push_back(cur_triangle);
-    */
     std::vector < Delayn::Point < float > > points;
     // Get appropriate vector
     for( QSet < QPoint > :: iterator it = material_points.begin(); it != material_points.end(); it++)

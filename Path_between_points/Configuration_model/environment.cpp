@@ -157,9 +157,49 @@ void Environment::triangulate(){
     for( QSet < QPoint > :: iterator it = material_points.begin(); it != material_points.end(); it++)
         points.push_back(Delayn::Point< float >(it->x(),it->y()));
     // Get triangulated edges
-    triangles = Delayn::triangulate<float>(points).edges;
-
+    edges = Delayn::triangulate<float>(points).edges;
+    std::vector < Delayn::Edge<float > > edges_buff = edges;
     // Delete edges which cross obstacles
+
+
+    //void line(int x0, int y0, int x1, int y1, TGAColor color) {
+    for ( std::vector<Delayn::Edge<float>> :: iterator it = edges_buff.begin(); it != edges_buff.end(); it++ ){
+        int x0(it->p0.x), y0(it->p0.y), x1(it->p1.x), y1(it->p1.x);
+        bool steep = false;
+        bool drop_edge = false;
+        if (std::abs(x0-x1)<std::abs(y0-y1)) {
+            std::swap(x0, y0);
+            std::swap(x1, y1);
+            steep = true;
+        }
+        if (x0>x1) {
+            std::swap(x0, x1);
+            std::swap(y0, y1);
+        }
+        int dx = x1-x0;
+        int dy = y1-y0;
+        int derror2 = std::abs(dy)*2;
+        int error2 = 0;
+        int y = y0;
+        for (int x=x0; x<=x1 && !drop_edge; x++) {
+            if (steep) {
+                //image.set(y, x, color);
+                drop_edge = point_in_obstakle(QPoint(y,x));
+            } else {
+                //image.set(x, y, color);
+                drop_edge = point_in_obstakle(QPoint(x,y));
+            }
+            error2 += derror2;
+
+            if (error2 > dx) {
+                y += (y1>y0?1:-1);
+                error2 -= dx*2;
+            }
+        }
+    //}
+        if ( drop_edge )
+            edges.erase(std::remove(edges.begin(), edges.end(), *it), edges.end());
+    }
 
 
 }
@@ -181,8 +221,8 @@ void Environment::paintEvent(QPaintEvent *event){
         }
     }
 
-    // Draw triangles
-    for ( std::vector<Delayn::Edge<float>> :: iterator it = triangles.begin() ; it != triangles.end(); it++){
+    // Draw edges
+    for ( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin() ; it != edges.end(); it++){
         QPolygon polygon;
         polygon << QPoint(it->p0.x, it->p0.y );
         polygon << QPoint(it->p1.x, it->p1.y );
@@ -249,3 +289,6 @@ void Environment::compute_ocupate_points(){
 
 }
 
+bool Environment::point_in_obstakle(QPoint p){
+   return (ocupate_points.find(p) != ocupate_points.end())? true : false;
+}
