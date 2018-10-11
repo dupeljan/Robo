@@ -159,7 +159,7 @@ void Environment::triangulate(){
     // Get triangulated edges
     triangles = Delayn::triangulate<float>(points).edges;
 
-    //
+    // Delete edges which cross obstacles
 
 
 }
@@ -181,6 +181,14 @@ void Environment::paintEvent(QPaintEvent *event){
         }
     }
 
+    // Draw triangles
+    for ( std::vector<Delayn::Edge<float>> :: iterator it = triangles.begin() ; it != triangles.end(); it++){
+        QPolygon polygon;
+        polygon << QPoint(it->p0.x, it->p0.y );
+        polygon << QPoint(it->p1.x, it->p1.y );
+
+        painter.drawPolyline(polygon);
+    }
 
 
 }
