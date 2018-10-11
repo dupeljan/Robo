@@ -90,13 +90,14 @@ void Environment::calculate_Minkowski_sum(QColor color){
 
 void Environment::generate_random_points_set(int count, double delta, QColor color){
     // Get all points
-    QSet < QPoint > free_points;
+
+    QSet < QPoint > free_points ;
     for( int x = 0; x <= SCR_LEN_X;x++)
         for ( int y = 0; y <= SCR_LEN_Y; y++)
             free_points.insert(QPoint(x,y));
     //delete all blockade points
-    for ( int i = 0; i < set_source.size(); i++)
-        for ( QSet < QPoint > :: iterator it = set_source[i].first.begin(); it != set_source[i].first.end(); it++ )
+    compute_ocupate_points();
+   for ( QSet < QPoint > :: iterator it = ocupate_points.begin(); it != ocupate_points.end(); it++ )
             free_points.remove(*it);
 
     // Create random set
@@ -133,10 +134,7 @@ void Environment::generate_grid(int len_x, int len_y, QPoint left_corner, QColor
                                  (20,20,QPoint(0,0),QColor(255,0,0))
 */
     //Got all blockade points
-    QSet < QPoint > ocupate_points;
-    for ( int i = 0; i < set_source.size(); i++)
-        for ( QSet < QPoint > :: iterator it = set_source[i].first.begin(); it != set_source[i].first.end(); it++ )
-            ocupate_points.insert(*it);
+    compute_ocupate_points();
     // Compute grid
     material_points.clear();
     for( int x = left_corner.x(); x <= SCR_LEN_X - left_corner.x() ; x += len_x)
@@ -158,7 +156,10 @@ void Environment::triangulate(){
     // Get appropriate vector
     for( QSet < QPoint > :: iterator it = material_points.begin(); it != material_points.end(); it++)
         points.push_back(Delayn::Point< float >(it->x(),it->y()));
+    // Get triangulated edges
     triangles = Delayn::triangulate<float>(points).edges;
+
+    //
 
 
 }
@@ -232,4 +233,11 @@ QSet <QPoint> Environment::create_circle_edges(QPoint centre, int radius){
     return circle;
 }
 
+void Environment::compute_ocupate_points(){
+   ocupate_points.clear();
+   for ( int i = 0; i < set_source.size(); i++)
+           for ( QSet < QPoint > :: iterator it = set_source[i].first.begin(); it != set_source[i].first.end(); it++ )
+                ocupate_points.insert(*it);
+
+}
 
