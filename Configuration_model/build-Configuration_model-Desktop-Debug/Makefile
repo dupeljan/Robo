@@ -351,7 +351,8 @@ moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 compiler_moc_header_make_all: moc_environment.cpp
 compiler_moc_header_clean:
 	-$(DEL_FILE) moc_environment.cpp
-moc_environment.cpp: ../../Path_between_points/Configuration_model/environment.h \
+moc_environment.cpp: ../../Path_between_points/Configuration_model/Delayn.h \
+		../../Path_between_points/Configuration_model/environment.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/dupeljan/Richter_robo/Path_between_points/Configuration_model -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../../Path_between_points/Configuration_model/environment.h -o moc_environment.cpp
@@ -375,10 +376,12 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 
 ####### Compile
 
-main.o: ../../Path_between_points/Configuration_model/main.cpp ../../Path_between_points/Configuration_model/environment.h
+main.o: ../../Path_between_points/Configuration_model/main.cpp ../../Path_between_points/Configuration_model/environment.h \
+		../../Path_between_points/Configuration_model/Delayn.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../Path_between_points/Configuration_model/main.cpp
 
 environment.o: ../../Path_between_points/Configuration_model/environment.cpp ../../Path_between_points/Configuration_model/environment.h \
+		../../Path_between_points/Configuration_model/Delayn.h \
 		ui_environment.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o environment.o ../../Path_between_points/Configuration_model/environment.cpp
 
