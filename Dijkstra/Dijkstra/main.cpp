@@ -7,5 +7,5 @@ int main(int argc, char *argv[])
     Graph w(2,5,0);
     w.show();
 
-    return a.exec();
+    //return a.exec();
 }

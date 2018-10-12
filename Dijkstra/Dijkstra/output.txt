@@ -1,11 +1,1 @@
-vertex weight 
-A:B 
-B:C 
-C:C 
-D:E E 
-E:E H A 
-F:D E G I 
-G:E 
-H:E 
-I:A D 
-J:B 
+C J H E F Length 180

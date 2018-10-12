@@ -58,8 +58,8 @@ Graph::Graph(int startpoint, int targetpoint, QWidget *parent) :
     Dijkstra(startpoint);
 
     //output_weight();
-    //output_result(/*start,finish*/);
-     output_weight();
+    output_result(/*start,finish*/);
+    // output_weight();
     std::cout << "success!" << '\n';
 }
 
@@ -83,7 +83,7 @@ void Graph::Dijkstra(int v){
 
         graph[v].weight = 0;
         ///
-        graph[v].parent.push_back(  v ) ;
+        graph[v].parent =  v ;
         ///
         std::set < std::pair < int, int > >::iterator it; // Итератор
         while (!search.empty()) {
@@ -93,7 +93,9 @@ void Graph::Dijkstra(int v){
 
             //Получаем указатель на текущую вершину
             vertex *cur_vert = &graph[it->second];
-
+            ///
+            int cur_vert_numb = it->second;
+            ///
             //Удаляем элемент из множества
             search.erase(it);
 
@@ -114,13 +116,13 @@ void Graph::Dijkstra(int v){
                     if (cur_neig->color == not_visited){								//Если не посещена
                         cur_neig->weight = cur_vert->weight + cur_vert->neigbors[i].first; //Вес равен сумме веса текущей вершины и соед. ребра
                         ///
-                        cur_neig->parent.push_back( it->second);
+                        cur_neig->parent = cur_vert_numb;
                         ///
                     }else{                                                           //Вес сохраняется, если новый больше
                         ///
                         if ( cur_neig->weight > cur_vert->weight + cur_vert->neigbors[i].first )
-                            cur_neig->parent = graph[it->second].parent;
-                            cur_neig->parent.push_back(it->second);
+                            cur_neig->parent = cur_vert_numb;
+
                         ///
                         cur_neig->weight = min(cur_neig->weight, cur_vert->weight + cur_vert->neigbors[i].first);
                     }
@@ -138,17 +140,17 @@ void Graph::Dijkstra(int v){
 
 void Graph::output_result(){
     //Compute path
-   /*
+
     path.push_back( targetPoint );
     for( int i = 0; path[i] != startPoint ; i++ )
         path.push_back(graph[path[i]].parent);
-    */
-    //path.push_back(startPoint);
+
     // Write in file
     std::fstream out;
     out.open(FILE_OUTPUT_PATCH, std::fstream::out);
     for( int i = path.size() - 1; i > -1; i-- )
         out << /*path[i]*/char(65 + path[i]) << ' ';
+    out << "Length " << graph[targetPoint].weight;
 }
 void Graph::output_weight() {
 
@@ -156,9 +158,7 @@ void Graph::output_weight() {
     out.open(FILE_OUTPUT_PATCH, std::fstream::out);
     out << "vertex weight \n";
     for (int i = 0; i < graph.size(); i++){
-        out << char(65 + i) << ':' ;
-        for( int j = 0 ; j < graph[i].parent.size(); j++ )
-            out<< char ( 65 + graph[i].parent[j] ) << ' ';
+        out << char(65 + i) << ':'<< char ( 65 + graph[i].parent ) << ' ';
         out << '\n';
     }
 

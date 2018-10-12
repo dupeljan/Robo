@@ -20,7 +20,7 @@ struct vertex //Вершина
 {
     colors color;
     int  weight;  //Вес вершины
-    std::vector <int> parent;   // Путь в начало
+    int parent;   // Путь в начало
     std::vector < std::pair < int, int > > neigbors;  // Список соседей: вес ребра,  номер
 };
 
