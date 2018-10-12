@@ -167,7 +167,7 @@ void Environment::triangulate(){
         edges_buff.insert(make_pair(QPoint(it->p0.x , it->p0.y),QPoint( it->p1.x, it->p1.y)));
     // Delete edges which cross obstacles
 
-
+/*
     //void line(int x0, int y0, int x1, int y1, TGAColor color) {
     for ( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin(); it != edges.end(); it++ ){
         int x0(it->p0.x), y0(it->p0.y), x1(it->p1.x), y1(it->p1.x);
@@ -208,7 +208,7 @@ void Environment::triangulate(){
 
     }
     set_edges = edges_buff;
-
+    */
 }
 
 void Environment::paintEvent(QPaintEvent *event){
@@ -229,10 +229,10 @@ void Environment::paintEvent(QPaintEvent *event){
     }
 
     // Draw edges
-    for ( QSet < pair <QPoint,QPoint> > :: iterator it = set_edges.begin() ; it != set_edges.end(); it++){
+    for ( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin() ; it != edges.end(); it++){
         QPolygon polygon;
-        polygon << QPoint(it->first.x(), it->first.y() );
-        polygon << QPoint(it->second.x(), it->second.y() );
+        polygon << QPoint(it->p0.x, it->p0.y);
+        polygon << QPoint(it->p1.x, it->p1.y);
 
         painter.drawPolyline(polygon);
     }
