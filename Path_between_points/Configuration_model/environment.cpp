@@ -163,10 +163,16 @@ void Environment::triangulate(){
     //std::vector < Delayn::Edge<float > > edges_buff = edges;
     // Copy vector to set
     QSet < pair <QPoint,QPoint> > edges_buff;
+    QVector < QSet <QPoint>> lines;
     for( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin(); it != edges.end(); it++ )
         edges_buff.insert(make_pair(QPoint(it->p0.x , it->p0.y),QPoint( it->p1.x, it->p1.y)));
     // Delete edges which cross obstacles
-
+    //Got all mat lines
+    for ( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin(); it != edges.end(); it++ )
+        lines.push_back(create_material_line(it->p0.x, it->p0.y,it->p1.x, it->p1.y));
+    //Draw it
+    for ( QVector < QSet <QPoint>> :: iterator it = lines.begin(); it != lines.end(); it++ )
+            set_source.push_back(make_pair(*it,QColor(255,0,0)));
 /*
     //void line(int x0, int y0, int x1, int y1, TGAColor color) {
     for ( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin(); it != edges.end(); it++ ){
@@ -227,7 +233,7 @@ void Environment::paintEvent(QPaintEvent *event){
             painter.drawPoint(it->x(),it->y());
         }
     }
-
+/*
     // Draw edges
     for ( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin() ; it != edges.end(); it++){
         QPolygon polygon;
@@ -237,7 +243,7 @@ void Environment::paintEvent(QPaintEvent *event){
         painter.drawPolyline(polygon);
     }
 
-
+*/
 }
 
 QSet <QPoint> Environment::create_rect_edges(QRect rect){
@@ -298,4 +304,40 @@ void Environment::compute_ocupate_points(){
 
 bool Environment::point_in_obstakle(QPoint p){
    return (ocupate_points.find(p) != ocupate_points.end())? true : false;
+}
+
+QSet <QPoint> Environment::create_material_line(int x0, int y0, int x1, int y1){
+    QSet <QPoint> line;
+    bool steep = false;
+        if (std::abs(x0-x1)<std::abs(y0-y1)) {
+            std::swap(x0, y0);
+            std::swap(x1, y1);
+            steep = true;
+        }
+        if (x0>x1) {
+            std::swap(x0, x1);
+            std::swap(y0, y1);
+        }
+        int dx = x1-x0;
+        int dy = y1-y0;
+        int derror2 = std::abs(dy)*2;
+        int error2 = 0;
+        int y = y0;
+        for (int x=x0; x<=x1; x++) {
+            if (steep) {
+                //image.set(y, x, color);
+                line.insert(QPoint(y,x));
+            } else {
+                //image.set(x, y, color);
+                line.insert(QPoint(x,y));
+
+            }
+            error2 += derror2;
+
+            if (error2 > dx) {
+                y += (y1>y0?1:-1);
+                error2 -= dx*2;
+            }
+        }
+        return line;
 }
