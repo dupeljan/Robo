@@ -65,26 +65,36 @@ void Plot::generate_random_points_vect(int count, double delta, QColor color){
     std::cout << materialPoints.size() << " random points found\n" << free_points.size() << " free elements left";
 }
 
+void Plot::generate_example_points_vect(){
+    materialPoints.push_back(QPoint(0,200));
+    materialPoints.push_back(QPoint(100,100));
+    materialPoints.push_back(QPoint(200,200));
+    materialPoints.push_back(QPoint(300,100));
+    materialPoints.push_back(QPoint(400,200));
+
+}
 void Plot::createBezierSpline(){
-    insertStartTargetPoints();
+   //insertStartTargetPoints();
     const double delta_t = 1e-2;
-    for(int i = 0; i < /* point before last */ materialPoints.size() - 1 ; i++ )
-        for(double t = 0; t <= 1; t+= delta_t )
+    for(int i = 0; i < /* point before last */ materialPoints.size() - 2 ; i++ )
+      // spline.push_back(middle(i));
+         for(double t = 0; t <= 1; t+= delta_t )
             spline.push_back( QPoint( B( middle(i).x() , materialPoints[i+1].x() , middle(i+1).x() , t), B( middle(i).y() , materialPoints[i+1].y() , middle(i+1).y() , t ) ) );
 
 }
+
 void Plot::paintEvent(QPaintEvent *event){
      QPainter painter(this);
+
+     // Draw spline
      QPen myPen(QColor(255,0,0));
      painter.setPen(myPen);
-     // Draw spline
+     painter.drawPolyline(spline.data(),spline.size());
 
-     painter.drawPolygon(spline);
      // Draw material points
      myPen.setColor(QColor(0,0,255));
      painter.setPen(myPen);
-     for(auto point : materialPoints)
-         painter.drawPoint(point);
+     painter.drawPolyline(materialPoints.data(), materialPoints.size());
 }
 
 
@@ -122,5 +132,5 @@ QPoint Plot::middle(int i){
         return materialPoints[0];
     if ( i == /*before last point*/ materialPoints.size() - 2 )
         return materialPoints[i+1];
-    return QPoint( materialPoints[i].x() + materialPoints[i+1].x() / 2 , materialPoints[i].y() + materialPoints[i+1].y() / 2 );
+    return QPoint( ( materialPoints[i].x() + materialPoints[i+1].x() ) / 2 ,  ( materialPoints[i].y() + materialPoints[i+1].y() ) / 2 );
 }

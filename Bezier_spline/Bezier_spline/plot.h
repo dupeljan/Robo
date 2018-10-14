@@ -35,6 +35,7 @@ public:
     explicit Plot(QPoint p_startPoint, QPoint p_targetPoint,QWidget *parent = 0);
     ~Plot();
     void generate_random_points_vect(int count, double delta, QColor color);
+    void generate_example_points_vect();
     void createBezierSpline();
 private:
     Ui::Plot *ui;

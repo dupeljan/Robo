@@ -26,7 +26,7 @@ public:
     {
         if (Plot->objectName().isEmpty())
             Plot->setObjectName(QStringLiteral("Plot"));
-        Plot->resize(400, 300);
+        Plot->resize(400, 400);
 
         retranslateUi(Plot);
 
