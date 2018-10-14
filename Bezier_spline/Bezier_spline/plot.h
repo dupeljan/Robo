@@ -22,7 +22,7 @@ class Plot : public QWidget
     Q_OBJECT
 private:
     QVector < QPoint > materialPoints;
-    QSet < QPoint > spline;
+    QVector < QPoint > spline;
     QPoint startPoint, targetPoint;
     struct {
             bool operator()(QPoint a, QPoint b) const

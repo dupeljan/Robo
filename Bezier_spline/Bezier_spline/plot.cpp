@@ -2,6 +2,7 @@
 #include "ui_plot.h"
 #include <QPainter>
 #include <QTime>
+#include <QPolygon>
 #include <iostream>
 #include <utility>
 #include <math.h>
@@ -69,7 +70,7 @@ void Plot::createBezierSpline(){
     const double delta_t = 1e-2;
     for(int i = 0; i < /* point before last */ materialPoints.size() - 1 ; i++ )
         for(double t = 0; t <= 1; t+= delta_t )
-            spline.insert( QPoint( B( middle(i).x() , materialPoints[i+1].x() , middle(i+1).x() , t), B( middle(i).y() , materialPoints[i+1].y() , middle(i+1).y() , t ) ) );
+            spline.push_back( QPoint( B( middle(i).x() , materialPoints[i+1].x() , middle(i+1).x() , t), B( middle(i).y() , materialPoints[i+1].y() , middle(i+1).y() , t ) ) );
 
 }
 void Plot::paintEvent(QPaintEvent *event){
@@ -77,8 +78,8 @@ void Plot::paintEvent(QPaintEvent *event){
      QPen myPen(QColor(255,0,0));
      painter.setPen(myPen);
      // Draw spline
-     for(auto point : spline)
-         painter.drawPoint(point);
+
+     painter.drawPolygon(spline);
      // Draw material points
      myPen.setColor(QColor(0,0,255));
      painter.setPen(myPen);
