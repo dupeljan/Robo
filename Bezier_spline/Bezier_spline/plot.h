@@ -34,11 +34,15 @@ private:
 public:
     explicit Plot(QPoint p_startPoint, QPoint p_targetPoint,QWidget *parent = 0);
     ~Plot();
-    void generate_random_points_set(int count, double delta, QColor color);
+    void generate_random_points_vect(int count, double delta, QColor color);
     void createBezierSpline();
 private:
     Ui::Plot *ui;
     void insertStartTargetPoints(); // Insert start & target points in materialPoints
+    // Computing each points of spline
+    int B(int P0, int P1, int P2, double t){ return  int((( P0 - 2*P1 +P2 )*pow( t , 2 ) + 2*( P1 - P0 )*t + P0)); }
+    // Compute middle point between point i & i+1 in materialPoints
+    QPoint middle(int i);
 
 protected:
     void paintEvent(QPaintEvent *event);

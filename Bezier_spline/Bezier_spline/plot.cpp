@@ -26,7 +26,7 @@ Plot::~Plot()
     delete ui;
 }
 
-void Plot::generate_random_points_set(int count, double delta, QColor color){
+void Plot::generate_random_points_vect(int count, double delta, QColor color){
     // Get all points
 
     QSet < QPoint > free_points ;
@@ -65,13 +65,25 @@ void Plot::generate_random_points_set(int count, double delta, QColor color){
 }
 
 void Plot::createBezierSpline(){
+    insertStartTargetPoints();
+    const double delta_t = 1e-2;
+    for(int i = 0; i < /* point before last */ materialPoints.size() - 1 ; i++ )
+        for(double t = 0; t <= 1; t+= delta_t )
+            spline.insert( QPoint( B( middle(i).x() , materialPoints[i+1].x() , middle(i+1).x() , t), B( middle(i).y() , materialPoints[i+1].y() , middle(i+1).y() , t ) ) );
 
 }
 void Plot::paintEvent(QPaintEvent *event){
      QPainter painter(this);
-}
-bool Plot::pointComparing(QPoint a, QPoint b){
-    return ( sqrt( pow(a.x(),2) + pow(a.y(),2) ) > sqrt( pow(b.x(),2) + pow(b.y(),2) )  )? true : false;
+     QPen myPen(QColor(255,0,0));
+     painter.setPen(myPen);
+     // Draw spline
+     for(auto point : spline)
+         painter.drawPoint(point);
+     // Draw material points
+     myPen.setColor(QColor(0,0,255));
+     painter.setPen(myPen);
+     for(auto point : materialPoints)
+         painter.drawPoint(point);
 }
 
 
@@ -97,4 +109,17 @@ void Plot::insertStartTargetPoints(){
         std::sort(materialPoints.begin() + 1,/*before last*/materialPoints.end() -2 , customLess);
     }
 
+}
+
+QPoint Plot::middle(int i){
+    if (i < 0 || i >= materialPoints.size() - 1 ){
+        /*ERROR*/
+        std::cout << "\nError";
+        return QPoint(0,0);
+   }
+    if ( i == 0)
+        return materialPoints[0];
+    if ( i == /*before last point*/ materialPoints.size() - 2 )
+        return materialPoints[i+1];
+    return QPoint( materialPoints[i].x() + materialPoints[i+1].x() / 2 , materialPoints[i].y() + materialPoints[i+1].y() / 2 );
 }
