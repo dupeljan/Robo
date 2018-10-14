@@ -100,7 +100,7 @@ void Plot::paintEvent(QPaintEvent *event){
 
 void Plot::insertStartTargetPoints(){
     // Sort material Points
-    std::sort(materialPoints.begin(),materialPoints.end() ,customLess );
+    std::sort(materialPoints.begin(),materialPoints.end() , customLess  );
 // Insert start Point
     //if not find
     if( std::find(materialPoints.begin(), materialPoints.end(), startPoint) == materialPoints.end())
@@ -108,7 +108,7 @@ void Plot::insertStartTargetPoints(){
     else {// change elem
         std::iter_swap(materialPoints.begin(),std::find(materialPoints.begin(), materialPoints.end(), startPoint) );
         // Sort once again
-        std::sort(materialPoints.begin() + 1,materialPoints.end(), customLess);
+        std::sort(materialPoints.begin() + 1,materialPoints.end(), customLess );
     }
 // Insert target Point
     //if not find
@@ -117,7 +117,7 @@ void Plot::insertStartTargetPoints(){
     else {// change elem
         std::iter_swap(/*last elem*/materialPoints.end() - 1,std::find(materialPoints.begin(), materialPoints.end(), targetPoint) );
         // Sort once again
-        std::sort(materialPoints.begin() + 1,/*before last*/materialPoints.end() -2 , customLess);
+        std::sort(materialPoints.begin() + 1,/*before last*/materialPoints.end() -2 , customLess );
     }
 
 }
