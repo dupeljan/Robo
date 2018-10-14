@@ -74,7 +74,7 @@ void Plot::generate_example_points_vect(){
 
 }
 void Plot::createBezierSpline(){
-   //insertStartTargetPoints();
+    insertStartTargetPoints();
     const double delta_t = 1e-2;
     for(int i = 0; i < /* point before last */ materialPoints.size() - 2 ; i++ )
       // spline.push_back(middle(i));
@@ -113,7 +113,7 @@ void Plot::insertStartTargetPoints(){
 // Insert target Point
     //if not find
     if( std::find(materialPoints.begin(), materialPoints.end(), targetPoint) == materialPoints.end())
-        materialPoints.push_back(startPoint);
+        materialPoints.push_back(targetPoint);
     else {// change elem
         std::iter_swap(/*last elem*/materialPoints.end() - 1,std::find(materialPoints.begin(), materialPoints.end(), targetPoint) );
         // Sort once again
