@@ -189,6 +189,8 @@ void Environment::Dijkstra(){
     // Create graph
     graph_init();
 
+    int v = std::distance( material_points.find( startPoint ) , material_points.begin() );
+
     //void deikstra( int v ){
         std::set < std::pair < int, int > > search; // Вес, номер
         search.insert(std::make_pair(0, v));
@@ -248,6 +250,7 @@ void Environment::Dijkstra(){
         }
         //return 0;
     //}
+        compute_shortest_path();
 
 }
 
@@ -396,6 +399,17 @@ void Environment::graph_init(){
     }
     for ( auto ver : graph)
         ver.color = not_visited;
+}
+
+void Environment::compute_shortest_path(){
+    // Get point N rand_number from free_set
+    //QPoint cur_point = *next(material_points.begin(),number);
+    shortest_path.clear();
+    shortest_path.push_back( targetPoint );
+    for( int i = 0; shortest_path[i] != startPoint ; i++ ){
+        int cur_point = graph[ std::distance( material_points.find( shortest_path[i] ) , material_points.begin() )].parent;
+        shortest_path.push_back( *next(material_points.begin(),cur_point) );
+    }
 }
 
 void Environment::mousePressEvent(QMouseEvent *ev){

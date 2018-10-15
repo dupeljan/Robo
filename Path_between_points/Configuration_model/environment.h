@@ -42,6 +42,7 @@ class Environment : public QWidget
     Q_OBJECT
 private:
     std::vector < vertex > graph;
+    std::vector < QPoint > shortest_path;
     //
     QSet < pair <QPoint,QPoint> > set_edges;
     QSet < QPoint > material_points;
@@ -77,6 +78,7 @@ private:
     bool line_in_obstakle(QSet <QPoint> s);
     void compute_ocupate_points();
     void graph_init();
+    void compute_shortest_path();
     int weight(Delayn::Edge<float> edge) { return sqrt( pow(edge.p1.x - edge.p0.x , 2) + pow(edge.p1.y - edge.p0.y , 2) );}
     Ui::Environment *ui;
 protected:
