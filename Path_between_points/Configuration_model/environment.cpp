@@ -255,6 +255,7 @@ void Environment::Dijkstra(){
         //return 0;
     //}
         compute_shortest_path();
+        update();
 
 
 }
@@ -286,7 +287,7 @@ void Environment::paintEvent(QPaintEvent *event){
     }
 
     // Draw shortest path
-    myPen.setColor(QColor(0,0,255));
+    myPen.setColor(QColor(0,255,0));
     painter.setPen(myPen);
     painter.drawPolyline(shortest_path.data(), shortest_path.size());
 
@@ -424,18 +425,30 @@ void Environment::compute_shortest_path(){
     shortest_path.clear();
     shortest_path.push_back( targetPoint );
     for( int i = 0; shortest_path[i] != startPoint ; i++ ){
-        int cur_point = graph[ std::distance( material_points.find( shortest_path[i] ) , material_points.begin() )].parent;
+        int cur_point = graph[ std::distance(  material_points.begin() , material_points.find( shortest_path[i] )  )].parent;
         shortest_path.push_back( *next(material_points.begin(),cur_point) );
     }
 }
 
+QPoint Environment::get_nearest_point(QPoint newPoint){
+    QPoint res ;
+    int minLen = SCR_LEN_X;
+    for ( auto point : material_points )
+        if ( length(point,newPoint) < minLen ){
+            minLen = length(point,newPoint) ;
+            res = point;
+        }
+    return res;
+
+}
 void Environment::mousePressEvent(QMouseEvent *ev){
     if (startPointSet){
-        targetPoint = ev->pos();
+        targetPoint = get_nearest_point( ev->pos() );
         Dijkstra();
+        startPointSet = false;
     }
     else{
-        startPoint = ev->pos();
+        startPoint = get_nearest_point( ev->pos() );
         startPointSet = true;
     }
 }

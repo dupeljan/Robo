@@ -74,12 +74,14 @@ private:
     QSet<QPoint> create_filled_rect(QRect rect);
     QSet<QPoint> create_filled_circle(QPoint centre, int radius);
     QSet<QPoint> create_material_line(int x0, int y0, int x1, int y1);
+    QPoint get_nearest_point(QPoint newPoint);
     bool point_in_obstakle(QPoint p);
     bool line_in_obstakle(QSet <QPoint> s);
     void compute_ocupate_points();
     void graph_init();
     void compute_shortest_path();
     int weight(Delayn::Edge<float> edge) { return sqrt( pow(edge.p1.x - edge.p0.x , 2) + pow(edge.p1.y - edge.p0.y , 2) );}
+    int length(QPoint a, QPoint b) { return sqrt( pow(a.x() - b.x() , 2) + pow(a.y() - b.y() , 2) );}
     Ui::Environment *ui;
 protected:
     void paintEvent(QPaintEvent *event);
