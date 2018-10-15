@@ -406,6 +406,7 @@ int distance(T elem, T begin){
 */
 
 void Environment::graph_init(){
+    graph.clear();
     graph.resize(material_points.size());
 
     for( auto edge : edges){
