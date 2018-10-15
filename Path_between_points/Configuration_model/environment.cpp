@@ -46,6 +46,7 @@ Environment::Environment(QRect rect, QPoint shift, QColor color, QWidget *parent
      ui->setupUi(this);
 
 
+
     // QRect new_rect( rect.x() + shift.x() , rect.width() + shift.x() , rect.y() + shift.y() ,rect.height() + shift.y() );
 
 

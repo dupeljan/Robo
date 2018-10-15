@@ -59,12 +59,11 @@ private:
     struct TpointsWrap{
         bool removeStartPoint;
         bool removeTargetPoint;
-        Delayn::Edge<float> startEdge, targetEdge;
+        Delayn::Edge<float> startEdge = Delayn::Edge<float>(Delayn::Point<float>(0,0),Delayn::Point<float>(0,0));
+        Delayn::Edge<float> targetEdge = Delayn::Edge<float>(Delayn::Point<float>(0,0),Delayn::Point<float>(0,0));
         TpointsWrap(){
             removeStartPoint = false;
             removeTargetPoint = false;
-            startEdge = Delayn::Edge<float>(Delayn::Point<float>(0,0) , Delayn::Point<float>(0,0) );
-            targetEdge = Delayn::Edge<float>(Delayn::Point<float>(0,0) , Delayn::Point<float>(0,0) );
         }
 
     } pointsWrap; // Necessary or not delete points from graph
