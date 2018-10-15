@@ -10,10 +10,12 @@ int main(int argc, char *argv[])
     e.add_rectange(QRect(280,100,320,250),QColor(0,0,255));
     e.add_rectange(QRect(70,70,130,130),QColor(0,0,255));
     e.calculate_Minkowski_sum(QColor(128,194,255));
-    e.generate_random_points_set(40,40,QColor(255,0,0));//30 40
+    //e.generate_random_points_set(40,40,QColor(255,0,0));//30 40
     //e.add_rectange(QRect(200,50,271,73),QColor(255,100,0));
-    //e.generate_grid(20,20,QPoint(0,0),QColor(255,0,0));//20 20 (00)
+    e.generate_grid(20,20,QPoint(0,0),QColor(255,0,0));//20 20 (00)
     e.triangulate();
+    //e.Dijkstra();
+
     e.show();
 
     return a.exec();

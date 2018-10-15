@@ -252,6 +252,7 @@ void Environment::Dijkstra(){
     //}
         compute_shortest_path();
 
+
 }
 
 void Environment::paintEvent(QPaintEvent *event){
@@ -279,6 +280,11 @@ void Environment::paintEvent(QPaintEvent *event){
 
         painter.drawPolyline(polygon);
     }
+
+    // Draw shortest path
+    myPen.setColor(QColor(0,0,255));
+    painter.setPen(myPen);
+    painter.drawPolyline(shortest_path.data(), shortest_path.size());
 
 
 }
@@ -415,8 +421,10 @@ void Environment::compute_shortest_path(){
 void Environment::mousePressEvent(QMouseEvent *ev){
     if (startPointSet){
         targetPoint = ev->pos();
+        Dijkstra();
     }
-    else
+    else{
         startPoint = ev->pos();
-
+        startPointSet = true;
+    }
 }
