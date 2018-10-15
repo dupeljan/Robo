@@ -56,6 +56,18 @@ private:
     QPoint startPoint;
     QPoint targetPoint;
     bool startPointSet;
+    struct TpointsWrap{
+        bool removeStartPoint;
+        bool removeTargetPoint;
+        Delayn::Edge<float> startEdge, targetEdge;
+        TpointsWrap(){
+            removeStartPoint = false;
+            removeTargetPoint = false;
+            startEdge = Delayn::Edge<float>(Delayn::Point<float>(0,0) , Delayn::Point<float>(0,0) );
+            targetEdge = Delayn::Edge<float>(Delayn::Point<float>(0,0) , Delayn::Point<float>(0,0) );
+        }
+
+    } pointsWrap; // Necessary or not delete points from graph
 public:
     explicit Environment(int robot_radius, QPoint shift, QColor color, QWidget *parent /*= 0*/);
     explicit Environment(QRect rect,QPoint shift, QColor color, QWidget *parent = 0);

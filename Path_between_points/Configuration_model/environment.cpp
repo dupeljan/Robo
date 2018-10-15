@@ -25,6 +25,7 @@ Environment::Environment(int robot_radius, QPoint centre, QColor color, QWidget 
     ui(new Ui::Environment),
     startPoint(QPoint(0,0)), targetPoint(QPoint(0,0)),
     startPointSet(false)
+
 {
     ui->setupUi(this);
 
@@ -428,16 +429,44 @@ void Environment::compute_shortest_path(){
 }
 
 void Environment::extend_graph(){
+    // Found nearlest points
     QPoint startPointNeig = get_nearest_point(startPoint);
     QPoint targetPointNeig = get_nearest_point(targetPoint);
+    // Inspect need to remove start/target points in future
+    pointsWrap.removeStartPoint = material_points.find(startPoint) == material_points.end();
+    pointsWrap.removeTargetPoint = material_points.find(targetPoint) == material_points.end();
     using Delayn::Edge ;
     using Delayn::Point;
-    // Add edges
-    edges.push_back(Edge<float>( Point<float>( startPointNeig.x() , startPointNeig.y() ) , Point<float>( startPoint.x() , startPoint.y() ) ));
-    edges.push_back(Edge<float>( Point<float>( targetPointNeig.x() , targetPointNeig.y() ) , Point<float>( targetPoint.x() , targetPoint.y() ) ));
-    // Add points
-    material_points.insert(startPoint);
-    material_points.insert(targetPoint);
+    if ( pointsWrap.removeStartPoint ){
+        // Add edge
+        pointsWrap.startEdge = Edge<float>( Point<float>( startPointNeig.x() , startPointNeig.y() ) , Point<float>( startPoint.x() , startPoint.y() ) );
+        edges.push_back(pointsWrap.startEdge);
+        // Add point
+        material_points.insert(startPoint);
+    }
+    if (pointsWrap.removeTargetPoint ){
+        // Add edge
+        pointsWrap.targetEdge = Edge<float>( Point<float>( targetPointNeig.x() , targetPointNeig.y() ) , Point<float>( targetPoint.x() , targetPoint.y() ) );
+        edges.push_back(pointsWrap.targetEdge);
+        // Add point
+        material_points.insert(targetPoint);
+    }
+}
+
+void Environment::squeeze_graph(){
+    if ( pointsWrap.removeStartPoint ){
+        // Remove point
+        material_points.remove(startPoint);
+        // Remove edge
+        edges.erase( std::find( edges.begin() , edges.end() ,  pointsWrap.startEdge ) );
+    }
+    if ( pointsWrap.removeTargetPoint ){
+        // Remove point
+        material_points.remove(targetPoint);
+        // Remove edge
+        edges.erase( std::find( edges.begin() , edges.end() ,  pointsWrap.targetEdge ) );
+    }
+
 }
 QPoint Environment::get_nearest_point(QPoint newPoint){
     QPoint res ;
@@ -453,8 +482,12 @@ QPoint Environment::get_nearest_point(QPoint newPoint){
 void Environment::mousePressEvent(QMouseEvent *ev){
     if (startPointSet){
         targetPoint = ev->pos();//get_nearest_point( ev->pos() );
-        extend_graph();
-        Dijkstra();
+        // If point not in obstacle
+        if( ! point_in_obstakle(startPoint) && ! point_in_obstakle(targetPoint) ){
+            extend_graph();
+            Dijkstra();
+            squeeze_graph();
+        }
         startPointSet = false;
     }
     else{
