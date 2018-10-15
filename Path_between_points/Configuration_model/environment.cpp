@@ -185,11 +185,15 @@ void Environment::triangulate(){
 
 }
 
+int min(int a, int b) {
+    return (a <= b) ? a : b;
+}
+
 void Environment::Dijkstra(){
     // Create graph
     graph_init();
 
-    int v = std::distance( material_points.find( startPoint ) , material_points.begin() );
+    int v = std::distance( material_points.begin() , material_points.find( startPoint )  );
 
     //void deikstra( int v ){
         std::set < std::pair < int, int > > search; // Вес, номер
@@ -393,13 +397,20 @@ QSet <QPoint> Environment::create_material_line(int x0, int y0, int x1, int y1){
         return line;
 }
 
+/*
+template <Class T>
+int distance(T elem, T begin){
+    for ( auto )
+}
+*/
+
 void Environment::graph_init(){
     graph.resize(material_points.size());
 
     for( auto edge : edges){
         int w = weight(edge);
-        int a = std::distance( material_points.find(QPoint(edge.p0.x , edge.p0.y)) , material_points.begin() );
-        int b = std::distance( material_points.find(QPoint(edge.p1.x , edge.p1.y)) , material_points.begin() );
+        int a = std::distance( material_points.begin() , material_points.find(QPoint(edge.p0.x , edge.p0.y)) );
+        int b = std::distance( material_points.begin() , material_points.find(QPoint(edge.p1.x , edge.p1.y)) );
         graph[a].neigbors.push_back(std::make_pair(w , b));
         graph[b].neigbors.push_back(std::make_pair(w , a));
     }
