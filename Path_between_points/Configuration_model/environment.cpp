@@ -483,8 +483,10 @@ QPoint Environment::get_nearest_point(QPoint newPoint){
 void Environment::mousePressEvent(QMouseEvent *ev){
     if (startPointSet){
         targetPoint = ev->pos();//get_nearest_point( ev->pos() );
-        // If point not in obstacle
-        if( ! point_in_obstakle(startPoint) && ! point_in_obstakle(targetPoint) ){
+        // If new edges not in obstacle
+        if( ! line_in_obstakle( create_material_line( startPoint , get_nearest_point(startPoint) ) ) &&
+            ! line_in_obstakle( create_material_line( targetPoint , get_nearest_point(targetPoint) ) ) )
+        {
             extend_graph();
             Dijkstra();
             squeeze_graph();
