@@ -11,6 +11,8 @@
 #include <QRect>
 #include <tuple>
 #include <QSet>
+#include <QMouseEvent>
+#include <math.h>
 #include "Delayn.h"
 
 #define SCR_LEN_X 400
@@ -21,10 +23,26 @@ namespace Ui {
 class Environment;
 }
 
+enum colors {
+    not_visited,
+    visited,
+    blocked,
+};
+
+struct vertex //Вершина
+{
+    colors color;
+    int  weight;  //Вес вершины
+    int parent;   // Путь в начало
+    std::vector < std::pair < int, int > > neigbors;  // Список соседей: вес ребра,  номер
+};
+
 class Environment : public QWidget
 {
     Q_OBJECT
 private:
+    std::vector < vertex > graph;
+    //
     QSet < pair <QPoint,QPoint> > set_edges;
     QSet < QPoint > material_points;
     vector < QSet < QPoint > >  edge_source;
@@ -34,6 +52,7 @@ private:
     std::vector<Delayn::Edge<float>> edges;
     QSet < QPoint > ocupate_points;
     QPoint startPoint;
+    bool startPointSet;
     QPoint targetPoint;
 public:
     explicit Environment(int robot_radius, QPoint shift, QColor color, QWidget *parent /*= 0*/);
@@ -46,6 +65,7 @@ public:
     void generate_random_points_set(int count, double delta, QColor color);
     void generate_grid(int len_x, int len_y, QPoint left_corner, QColor color);
     void set_path_points(QPoint p_startPoint, QPoint p_targetPoint );
+    void Dijkstra();
     void triangulate();
 private:
     QSet<QPoint> create_rect_edges(QRect rect);
@@ -56,9 +76,12 @@ private:
     bool point_in_obstakle(QPoint p);
     bool line_in_obstakle(QSet <QPoint> s);
     void compute_ocupate_points();
+    void graph_init();
+    int weight(Delayn::Edge<float> edge) { return sqrt( pow(edge.p1.x - edge.p0.x , 2) + pow(edge.p1.y - edge.p0.y , 2) );}
     Ui::Environment *ui;
 protected:
     void paintEvent(QPaintEvent *event);
+    void mousePressEvent (QMouseEvent * ev);
 };
 
 #endif // ENVIRONMENT_H

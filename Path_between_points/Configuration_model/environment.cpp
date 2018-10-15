@@ -23,7 +23,8 @@ inline uint qHash (const QPoint & key){
 Environment::Environment(int robot_radius, QPoint centre, QColor color, QWidget *parent /* = 0*/):
     QWidget(parent),
     ui(new Ui::Environment),
-    startPoint(QPoint(0,0)), targetPoint(QPoint(0,0))
+    startPoint(QPoint(0,0)), targetPoint(QPoint(0,0)),
+    startPointSet(false)
 {
     ui->setupUi(this);
 
@@ -38,7 +39,8 @@ Environment::Environment(int robot_radius, QPoint centre, QColor color, QWidget 
 Environment::Environment(QRect rect, QPoint shift, QColor color, QWidget *parent /* = 0 */):
     QWidget(parent),
     ui(new Ui::Environment),
-    startPoint(QPoint(0,0)), targetPoint(QPoint(0,0))
+    startPoint(QPoint(0,0)), targetPoint(QPoint(0,0)),
+    startPointSet(false)
 {
      ui->setupUi(this);
 
@@ -183,6 +185,72 @@ void Environment::triangulate(){
 
 }
 
+void Environment::Dijkstra(){
+    // Create graph
+    graph_init();
+
+    //void deikstra( int v ){
+        std::set < std::pair < int, int > > search; // Вес, номер
+        search.insert(std::make_pair(0, v));
+
+        graph[v].weight = 0;
+        ///
+        graph[v].parent =  v ;
+        ///
+        std::set < std::pair < int, int > >::iterator it; // Итератор
+        while (!search.empty()) {
+
+            //Извлекаем первый элемент множества
+            it = search.begin();
+
+            //Получаем указатель на текущую вершину
+            vertex *cur_vert = &graph[it->second];
+            ///
+            int cur_vert_numb = it->second;
+            ///
+            //Удаляем элемент из множества
+            search.erase(it);
+
+
+            //Блокируем текущую вершину
+            cur_vert->color = blocked;
+
+            //Для каждого соседа
+            for (int i = 0; i < cur_vert->neigbors.size(); i++) {
+
+                //Получаем указатель на соседа
+                vertex *cur_neig = & graph[cur_vert->neigbors[i].second];
+
+                if (cur_neig->color != blocked) {
+
+
+                    //Вычисляем длинну
+                    if (cur_neig->color == not_visited){								//Если не посещена
+                        cur_neig->weight = cur_vert->weight + cur_vert->neigbors[i].first; //Вес равен сумме веса текущей вершины и соед. ребра
+                        ///
+                        cur_neig->parent = cur_vert_numb;
+                        ///
+                    }else{                                                           //Вес сохраняется, если новый больше
+                        ///
+                        if ( cur_neig->weight > cur_vert->weight + cur_vert->neigbors[i].first )
+                            cur_neig->parent = cur_vert_numb;
+
+                        ///
+                        cur_neig->weight = min(cur_neig->weight, cur_vert->weight + cur_vert->neigbors[i].first);
+                    }
+                    //Посещаем вершину
+                    cur_neig->color = visited;
+
+                    //Вставляем в множество
+                    search.insert(std::make_pair(cur_neig->weight, cur_vert->neigbors[i].second ));// Записываем вес и номер вершины
+                }
+            }
+        }
+        //return 0;
+    //}
+
+}
+
 void Environment::paintEvent(QPaintEvent *event){
 
     QPainter painter(this);
@@ -316,3 +384,25 @@ QSet <QPoint> Environment::create_material_line(int x0, int y0, int x1, int y1){
         return line;
 }
 
+void Environment::graph_init(){
+    graph.resize(material_points.size());
+
+    for( auto edge : edges){
+        int w = weight(edge);
+        int a = std::distance( material_points.find(QPoint(edge.p0.x , edge.p0.y)) , material_points.begin() );
+        int b = std::distance( material_points.find(QPoint(edge.p1.x , edge.p1.y)) , material_points.begin() );
+        graph[a].neigbors.push_back(std::make_pair(w , b));
+        graph[b].neigbors.push_back(std::make_pair(w , a));
+    }
+    for ( auto ver : graph)
+        ver.color = not_visited;
+}
+
+void Environment::mousePressEvent(QMouseEvent *ev){
+    if (startPointSet){
+        targetPoint = ev->pos();
+    }
+    else
+        startPoint = ev->pos();
+
+}

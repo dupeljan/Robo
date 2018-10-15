@@ -8,6 +8,7 @@
 #include <QColor>
 #include <math.h>
 
+
 #define SCR_LEN_X 400
 #define SCR_LEN_Y 400
 
@@ -37,6 +38,7 @@ public:
     void generate_random_points_vect(int count, double delta, QColor color);
     void generate_example_points_vect();
     void createBezierSpline();
+    //void createCatmullRomSpline();
 private:
     Ui::Plot *ui;
     void insertStartTargetPoints(); // Insert start & target points in materialPoints
