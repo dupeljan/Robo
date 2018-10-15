@@ -149,11 +149,6 @@ void Environment::generate_grid(int len_x, int len_y, QPoint left_corner, QColor
     set_source.push_back(make_pair(material_points,color));
 }
 
-void Environment::set_path_points(QPoint p_startPoint, QPoint p_targetPoint){
-    startPoint = p_startPoint;
-    targetPoint = p_targetPoint;
-}
-
 void Environment::triangulate(){
 
     std::vector < Delayn::Point < float > > points;
@@ -287,7 +282,8 @@ void Environment::paintEvent(QPaintEvent *event){
     }
 
     // Draw shortest path
-    myPen.setColor(QColor(0,255,0));
+    myPen.setColor(QColor(0,0,255));
+    myPen.setWidth(PATH_WIDHT);
     painter.setPen(myPen);
     painter.drawPolyline(shortest_path.data(), shortest_path.size());
 
@@ -431,6 +427,18 @@ void Environment::compute_shortest_path(){
     }
 }
 
+void Environment::extend_graph(){
+    QPoint startPointNeig = get_nearest_point(startPoint);
+    QPoint targetPointNeig = get_nearest_point(targetPoint);
+    using Delayn::Edge ;
+    using Delayn::Point;
+    // Add edges
+    edges.push_back(Edge<float>( Point<float>( startPointNeig.x() , startPointNeig.y() ) , Point<float>( startPoint.x() , startPoint.y() ) ));
+    edges.push_back(Edge<float>( Point<float>( targetPointNeig.x() , targetPointNeig.y() ) , Point<float>( targetPoint.x() , targetPoint.y() ) ));
+    // Add points
+    material_points.insert(startPoint);
+    material_points.insert(targetPoint);
+}
 QPoint Environment::get_nearest_point(QPoint newPoint){
     QPoint res ;
     int minLen = SCR_LEN_X;
@@ -444,12 +452,13 @@ QPoint Environment::get_nearest_point(QPoint newPoint){
 }
 void Environment::mousePressEvent(QMouseEvent *ev){
     if (startPointSet){
-        targetPoint = get_nearest_point( ev->pos() );
+        targetPoint = ev->pos();//get_nearest_point( ev->pos() );
+        extend_graph();
         Dijkstra();
         startPointSet = false;
     }
     else{
-        startPoint = get_nearest_point( ev->pos() );
+        startPoint = ev->pos();//get_nearest_point( ev->pos() );
         startPointSet = true;
     }
 }
