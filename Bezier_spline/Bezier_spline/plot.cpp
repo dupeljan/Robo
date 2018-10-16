@@ -122,6 +122,7 @@ void Plot::insertStartTargetPoints(){
 
 }
 
+
 QPoint Plot::middle(int i){
     if (i < 0 || i >= materialPoints.size() - 1 ){
         /*ERROR*/

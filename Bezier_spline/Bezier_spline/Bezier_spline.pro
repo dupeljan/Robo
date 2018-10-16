@@ -28,7 +28,8 @@ SOURCES += \
         plot.cpp
 
 HEADERS += \
-        plot.h
+        plot.h \
+    matrixproc.h
 
 FORMS += \
         plot.ui
