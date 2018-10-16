@@ -31,7 +31,7 @@ vector < T > composition(vector < vector < T > > a, vector < T > b) {
 template <class T>// Строка на матрицу
 vector < T > composition(vector < T > a, vector < vector < T > > b) {
     int n = a.size();
-    vector < T  > res;
+    vector < T > res;
     res.resize(n);
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n; j++)  // Выбираем элемент res

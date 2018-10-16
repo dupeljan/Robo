@@ -38,8 +38,10 @@ public:
     ~Plot();
     void generate_random_points_vect(int count, double delta, QColor color);
     void generate_example_points_vect();
+    void generate_points_for_closed_spline();
+    void createCloseCatmullRomSpline();
     void createBezierSpline();
-    void createCatmullRomSpline();
+    void createCatmullRomSpline(bool closed = false);
 private:
     Ui::Plot *ui;
     void insertStartTargetPoints(); // Insert start & target points in materialPoints
