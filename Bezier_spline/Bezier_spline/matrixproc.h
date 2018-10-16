@@ -1,7 +1,7 @@
 #ifndef MATRIXPROC_H
 #define MATRIXPROC_H
 #include <vector>
-
+using namespace std;
 //Умножение квадратных матриц
 template <class T>
 vector < vector < T > > composition(vector < vector < T > > a, vector < vector < T > > b) {
@@ -16,18 +16,20 @@ vector < vector < T > > composition(vector < vector < T > > a, vector < vector <
     }
     return res;
 }
-                                    // Матрица на столбец
-vector < vector < T > > composition(vector < vector < T > > a, vector < T > b) {
+
+template <class T>                                    // Матрица на столбец
+vector < T > composition(vector < vector < T > > a, vector < T > b) {
     int n = a.size();
-    vector < vector < T > > res;
+    vector < T > res;
     res.resize(n);
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n; j++)
             res[i] += a[i][j] * b[j];
     return res;
 }
-                                // Строка на матрицу
-vector < vector < T > > composition(vector < T > a, vector < vector < T > > b) {
+
+template <class T>// Строка на матрицу
+vector < T > composition(vector < T > a, vector < vector < T > > b) {
     int n = a.size();
     vector < T  > res;
     res.resize(n);
@@ -38,4 +40,11 @@ vector < vector < T > > composition(vector < T > a, vector < vector < T > > b) {
     return res;
 }
 
+template <class T>
+T composition(vector < T > a , vector < T > b){
+    T result = 0;
+    for ( int i = 0; i < a.size(); i++ )
+        result += a[i] * b[i];
+    return result;
+}
 #endif // MATRIXPROC_H

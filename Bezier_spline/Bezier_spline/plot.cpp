@@ -7,6 +7,7 @@
 #include <utility>
 #include <math.h>
 #include <algorithm>
+#include "matrixproc.h"
 // Funct for using QSet<QPoint>
 inline uint qHash (const QPoint & key){
     return qHash (QPair<int,int>(key.x(), key.y()) );
@@ -122,7 +123,24 @@ void Plot::insertStartTargetPoints(){
 
 }
 
+void Plot::createCatmullRomSpline(){
+   const std::vector < std::vector < double > > C={ { 0 , 2 , 0 , 0 } ,
+                                                    {-1 , 0 , 1 , 0 } ,
+                                                    { 2 , 5 , 4 ,-1 } ,
+                                                    {-1 , 3 ,-3 , 1 }
+                                            };
+    for( int i = 1; i < materialPoints.size() - 2; i++ ){
+        std::vector<double> Px = { materialPoints[i-1].x() , materialPoints[i].x() , materialPoints[i+1].x() , materialPoints[i+2].x() };
+        std::vector<double> Py = { materialPoints[i-1].y() , materialPoints[i].y() , materialPoints[i+1].y() , materialPoints[i+2].y() };
+        std::vector  < double >  Cx = composition<double>(C,Px);
+        std::vector  < double >  Cy = composition<double>(C,Py);
+        for ( double t = 0; t <= 1; t += DELTA_T ){
+            std::vector<double> T = { 1 , t , pow(t,2) , pow(t,3) };
+            spline.push_back(QPoint( composition<double>(T,Cx) / 2 , composition<double>(T,Cy) / 2));
+        }
+    }
 
+}
 QPoint Plot::middle(int i){
     if (i < 0 || i >= materialPoints.size() - 1 ){
         /*ERROR*/

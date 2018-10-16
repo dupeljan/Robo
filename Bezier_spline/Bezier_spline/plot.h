@@ -11,6 +11,7 @@
 
 #define SCR_LEN_X 400
 #define SCR_LEN_Y 400
+#define DELTA_T 1e-1
 
 namespace Ui {
 class Plot;
