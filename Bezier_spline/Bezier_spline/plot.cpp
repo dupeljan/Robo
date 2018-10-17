@@ -8,6 +8,7 @@
 #include <math.h>
 #include <algorithm>
 #include "matrixproc.h"
+#define PI 3.14159265359
 // Funct for using QSet<QPoint>
 inline uint qHash (const QPoint & key){
     return qHash (QPair<int,int>(key.x(), key.y()) );
@@ -101,6 +102,18 @@ void Plot::generate_points_for_closed_spline(){
     std::for_each(materialPoints.begin() , materialPoints.end(), [](QPoint &p){ p.setX(p.x() * 10); p.setY(p.y() * 10 );} );
 
 }
+
+void Plot::generate_points_for_open_spline(){
+    materialPoints.clear();
+    const int xShift(100), yShift(200), scale(50);
+    for( int i = 0; i < 7; i++)
+        materialPoints.push_back( QPoint( ( PI / double(2) ) * i , - cos( ( PI / double(2) ) * i ) ) );
+
+    std::for_each(materialPoints.begin() , materialPoints.end(), [](QPoint &p){ p.setX(p.x() * scale + xShift); p.setY(p.y() * scale + yShift);} );
+    derPoints.PFirst = QPoint ( sin(0) * scale + xShift , sin(0) * scale + yShift );
+    derPoints.PLast = QPoint ( sin( ( PI / double(2) ) * 7 + xShift ) , sin( ( PI / double(2) ) * 7 + yShift ) ) ;
+}
+
 void Plot::paintEvent(QPaintEvent *event){
      QPainter painter(this);
 
@@ -140,22 +153,51 @@ void Plot::insertStartTargetPoints(){
 }
 
 void Plot::createCatmullRomSpline(){
+    //First spline
+   const std::vector < std::vector < double > > CFirst={ { 0 , 2 , 0 , 0 } ,
+                                                         { 2 , 0 , 0 , 0 } ,
+                                                         {-4 ,-5 , 6 ,-1 } ,
+                                                         { 2 , 5 ,-4 ,-1 } };
+
+   const std::vector < std::vector < double > > CLast={ { 0 , 2 , 0 , 0 } ,
+                                                        {-1 , 0 , 1 , 0 } ,
+                                                        { 2 ,-6 , 4 ,-2 } ,
+                                                        {-1 , 4 ,-3 ,-2 } };
+
    const std::vector < std::vector < double > > C={ { 0 , 2 , 0 , 0 } ,
                                                     {-1 , 0 , 1 , 0 } ,
                                                     { 2 ,-5 , 4 ,-1 } ,
                                                     {-1 , 3 ,-3 , 1 } };
-    for( int i = 1; i < materialPoints.size() - 2; i++ ){
-        std::vector < double > Px = { materialPoints[i-1].x() , materialPoints[i].x() , materialPoints[i+1].x() , materialPoints[i+2].x() };
-        std::vector < double > Py = { materialPoints[i-1].y() , materialPoints[i].y() , materialPoints[i+1].y() , materialPoints[i+2].y() };
-        std::vector < double > Cx = composition<double>(C,Px);
-        std::vector < double > Cy = composition<double>(C,Py);
-        for ( double t = 0; t <= 1; t += DELTA_T ){
+
+    std::vector < double > Px, Py, Cx, Cy;
+    int n = materialPoints.size() - 1;
+    for ( int i = 0; i < n  ; i++){
+
+        if ( i == 0 ) {
+            Px = { derPoints.PFirst.x() , materialPoints[i].x() , materialPoints[i+1].x() , materialPoints[i+2].x() };
+            Py = { derPoints.PFirst.y() , materialPoints[i].y() , materialPoints[i+1].y() , materialPoints[i+2].y() };
+            Cx = composition<double>(CFirst,Px);
+            Cy = composition<double>(CFirst,Py);
+       } else
+        if ( i == n - 1 ) {
+            Px = { materialPoints[i-1].x() , materialPoints[i].x() , materialPoints[i+1].x() , derPoints.PLast.x() };
+            Py = { materialPoints[i-1].y() , materialPoints[i].y() , materialPoints[i+1].y() , derPoints.PLast.y() };
+            Cx = composition<double>(CLast,Px);
+            Cy = composition<double>(CLast,Py);
+        } else {
+            Px = { materialPoints[i-1].x() , materialPoints[i].x() , materialPoints[i+1].x() , materialPoints[i+2].x() };
+            Py = { materialPoints[i-1].y() , materialPoints[i].y() , materialPoints[i+1].y() , materialPoints[i+2].y() };
+            Cx = composition<double>(C,Px);
+            Cy = composition<double>(C,Py);
+        }
+         for ( double t = 0; t <= 1; t += DELTA_T ){
             std::vector<double> T = { 1 , t , t*t , t*t*t };
             spline.push_back(QPoint( composition<double>(T,Cx) / 2 , composition<double>(T,Cy) / 2));
         }
     }
-
 }
+
+
 
 void Plot::createCatmullLoopRomSpline(){
     const std::vector < std::vector < double > > C={ { 0 , 2 , 0 , 0 } ,

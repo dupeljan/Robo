@@ -19,6 +19,7 @@ class Plot;
 
 
 
+
 class Plot : public QWidget
 {
     Q_OBJECT
@@ -26,6 +27,10 @@ private:
     QVector < QPoint > materialPoints;
     QVector < QPoint > spline;
     QPoint startPoint, targetPoint;
+    struct {
+        QPoint PFirst, PLast;
+    } derPoints;
+
     struct {
             bool operator()(QPoint a, QPoint b) const
             {
@@ -39,6 +44,7 @@ public:
     void generate_random_points_vect(int count, double delta, QColor color);
     void generate_example_points_vect();
     void generate_points_for_closed_spline();
+    void generate_points_for_open_spline();
     void createCloseCatmullRomSpline();
     void createBezierSpline();
     void createCatmullRomSpline();
