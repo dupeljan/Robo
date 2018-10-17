@@ -105,13 +105,13 @@ void Plot::generate_points_for_closed_spline(){
 
 void Plot::generate_points_for_open_spline(){
     materialPoints.clear();
-    const int xShift(100), yShift(200), scale(50);
+    const int xShift(100), yShift(200), scale(100);
     for( int i = 0; i < 7; i++)
         materialPoints.push_back( QPoint( ( PI / double(2) ) * i , - cos( ( PI / double(2) ) * i ) ) );
 
     std::for_each(materialPoints.begin() , materialPoints.end(), [](QPoint &p){ p.setX(p.x() * scale + xShift); p.setY(p.y() * scale + yShift);} );
     derPoints.PFirst = QPoint ( sin(0) * scale + xShift , sin(0) * scale + yShift );
-    derPoints.PLast = QPoint ( sin( ( PI / double(2) ) * 7 + xShift ) , sin( ( PI / double(2) ) * 7 + yShift ) ) ;
+    derPoints.PLast = QPoint ( sin( PI  * 3 * scale ) + xShift , sin(  PI * 3 * scale )+ yShift  ) ;
 }
 
 void Plot::paintEvent(QPaintEvent *event){
@@ -157,12 +157,12 @@ void Plot::createCatmullRomSpline(){
    const std::vector < std::vector < double > > CFirst={ { 0 , 2 , 0 , 0 } ,
                                                          { 2 , 0 , 0 , 0 } ,
                                                          {-4 ,-5 , 6 ,-1 } ,
-                                                         { 2 , 5 ,-4 ,-1 } };
+                                                         { 2 , 3 ,-4 , 1 } };
 
    const std::vector < std::vector < double > > CLast={ { 0 , 2 , 0 , 0 } ,
                                                         {-1 , 0 , 1 , 0 } ,
                                                         { 2 ,-6 , 4 ,-2 } ,
-                                                        {-1 , 4 ,-3 ,-2 } };
+                                                        {-1 , 4 ,-3 , 2 } };
 
    const std::vector < std::vector < double > > C={ { 0 , 2 , 0 , 0 } ,
                                                     {-1 , 0 , 1 , 0 } ,
