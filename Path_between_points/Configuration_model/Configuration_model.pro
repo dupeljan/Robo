@@ -25,10 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        environment.cpp
+        environment.cpp \
+    crspline.cpp
 
 HEADERS += \
-        environment.h
+        environment.h \
+    crspline.h
 
 FORMS += \
         environment.ui
