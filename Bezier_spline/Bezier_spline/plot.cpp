@@ -106,26 +106,27 @@ void Plot::generate_points_for_closed_spline(){
 void Plot::generate_points_for_open_spline(){
     materialPoints.clear();
     const int xShift(100), yShift(200), scale(100);
-    for( int i = 0; i < 7; i++)
-        materialPoints.push_back( QPoint( ( PI / double(2) ) * i , - cos( ( PI / double(2) ) * i ) ) );
+    for( double x = 0; x <= 3*PI ; x +=   PI / double(2)  /* (2.5 * PI) / double (100)*/  )
+        materialPoints.push_back( QPoint( x * scale ,   - scale * cos( x ) ) );
 
-    std::for_each(materialPoints.begin() , materialPoints.end(), [](QPoint &p){ p.setX(p.x() * scale + xShift); p.setY(p.y() * scale + yShift);} );
-    derPoints.PFirst = QPoint ( sin(0) * scale + xShift , sin(0) * scale + yShift );
-    derPoints.PLast = QPoint ( sin( PI  * 3 * scale ) + xShift , sin(  PI * 3 * scale )+ yShift  ) ;
+    std::for_each(materialPoints.begin() , materialPoints.end(), [](QPoint &p){ p.setX(p.x()  +xShift ); p.setY(p.y()   + yShift);} );
+    derPoints.PFirst = QPoint ( 1 , 0 ); // 1 , 0
+    derPoints.PLast = QPoint ( 1 , 0 ) ;
 }
 
 void Plot::paintEvent(QPaintEvent *event){
      QPainter painter(this);
+     QPen myPen(QColor(255,0,0));
 
      // Draw spline
-     QPen myPen(QColor(255,0,0));
      painter.setPen(myPen);
      painter.drawPolyline(spline.data(),spline.size());
-
+/*
      // Draw material points
      myPen.setColor(QColor(0,0,255));
      painter.setPen(myPen);
      painter.drawPolyline(materialPoints.data(), materialPoints.size());
+*/
 }
 
 void Plot::insertStartTargetPoints(){
@@ -192,7 +193,7 @@ void Plot::createCatmullRomSpline(){
         }
          for ( double t = 0; t <= 1; t += DELTA_T ){
             std::vector<double> T = { 1 , t , t*t , t*t*t };
-            spline.push_back(QPoint( composition<double>(T,Cx) / 2 , composition<double>(T,Cy) / 2));
+            spline.push_back(QPoint( composition<double>(T,Cx) / 2.0 , composition<double>(T,Cy) / 2.0));
         }
     }
 }
