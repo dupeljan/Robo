@@ -264,22 +264,22 @@ void Environment::paintEvent(QPaintEvent *event){
     //Draw robot
     QPen myPen(robot.second);
     painter.setPen(myPen);
-    for ( QSet <QPoint>::iterator it = robot.first.begin(); it != robot.first.end(); it++ )
-         painter.drawPoint(it->x(),it->y());
+    for ( auto point :  robot.first )
+         painter.drawPoint(point.x(),point.y());
     // Draw sets
     for ( int i = 0; i < set_source.size(); i++ ){
         QPen myPen(set_source[i].second);
         painter.setPen(myPen);
-        for ( QSet< QPoint >::iterator it = set_source[i].first.begin(); it !=set_source[i].first.end(); it++ ){
-            painter.drawPoint(it->x(),it->y());
+        for ( auto point : set_source[i].first ){
+            painter.drawPoint(point.x(),point.y());
         }
     }
 
     // Draw edges
-    for ( std::vector<Delayn::Edge<float>> :: iterator it = edges.begin() ; it != edges.end(); it++){
+    for ( auto edge : edges ){
         QPolygon polygon;
-        polygon << QPoint(it->p0.x, it->p0.y);
-        polygon << QPoint(it->p1.x, it->p1.y);
+        polygon << QPoint(edge.p0.x, edge.p0.y);
+        polygon << QPoint(edge.p1.x, edge.p1.y);
 
         painter.drawPolyline(polygon);
     }
@@ -418,9 +418,11 @@ void Environment::compute_shortest_path(){
     //QPoint cur_point = *next(material_points.begin(),number);
     shortest_path.clear();
     shortest_path.push_back( targetPoint );
-    for( int i = 0; shortest_path[i] != startPoint ; i++ ){
-        int cur_point = graph[ std::distance(  material_points.begin() , material_points.find( shortest_path[i] )  )].parent;
-        shortest_path.push_back( *next(material_points.begin(),cur_point) );
+    if ( graph[ distance(startPoint) ].neigbors.size() && graph[ distance(targetPoint) ].neigbors.size() ){
+        for( int i = 0; shortest_path[i] != startPoint ; i++ ){
+            int cur_point = graph[ std::distance(  material_points.begin() , material_points.find( shortest_path[i] )  )].parent;
+            shortest_path.push_back( *next(material_points.begin(),cur_point) );
+        }
     }
 }
 
@@ -441,6 +443,7 @@ bool Environment::extend_graph(){
 
         if ( pointsWrap.removeStartPoint  || pointsWrap.removeTargetPoint   )
             triangulate();
+
 
 
     } else
@@ -475,6 +478,9 @@ QPoint Environment::get_nearest_point(QPoint newPoint){
 
 }
 
+int Environment::distance(QPoint point){
+    return std::distance( material_points.begin() , material_points.find( point )  );
+}
 void Environment::mousePressEvent(QMouseEvent *ev){
     if (startPointSet){
         targetPoint = ev->pos();//get_nearest_point( ev->pos() );

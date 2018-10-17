@@ -87,13 +87,14 @@ private:
     QPoint get_nearest_point(QPoint newPoint);
     bool point_in_obstakle(QPoint p);
     bool line_in_obstakle(QSet <QPoint> s);
+    bool extend_graph();
     void compute_ocupate_points();
     void graph_init();
-    bool extend_graph();
     void squeeze_graph();
     void compute_shortest_path();
     int weight(Delayn::Edge<float> edge) { return sqrt( pow(edge.p1.x - edge.p0.x , 2) + pow(edge.p1.y - edge.p0.y , 2) );}
     int length(QPoint a, QPoint b) { return sqrt( pow(a.x() - b.x() , 2) + pow(a.y() - b.y() , 2) );}
+    int distance(QPoint point);
     Ui::Environment *ui;
 protected:
     void paintEvent(QPaintEvent *event);
