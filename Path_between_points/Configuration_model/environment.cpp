@@ -155,9 +155,10 @@ void Environment::triangulate(){
 
     std::vector < Delayn::Point < float > > points;
     // Get appropriate vector
-    for( QSet < QPoint > :: iterator it = material_points.begin(); it != material_points.end(); it++)
-        points.push_back(Delayn::Point< float >(it->x(),it->y()));
+    for( auto point : material_points )
+        points.push_back(Delayn::Point< float >(point.x(),point.y()));
     // Get triangulated edges
+    edges.clear();
     edges = Delayn::triangulate<float>(points).edges;
     //std::vector < Delayn::Edge<float > > edges_buff = edges;
     // Copy vector to another
@@ -167,11 +168,11 @@ void Environment::triangulate(){
         edges_buff.insert(make_pair(QPoint(it->p0.x , it->p0.y),QPoint( it->p1.x, it->p1.y)));
        */
     // Delete edges which cross obstacles
-    for ( std::vector<Delayn::Edge<float>> :: iterator it = buff_edges.begin(); it != buff_edges.end(); it++ ){
-        line = create_material_line(it->p0.x, it->p0.y,it->p1.x, it->p1.y);
+    for (auto edge : buff_edges ){
+        line = create_material_line(edge.p0.x, edge.p0.y,edge.p1.x, edge.p1.y);
         //Find obstacle
         if (line_in_obstakle(line))
-            edges.erase(std::remove(edges.begin(), edges.end(), *it), edges.end());
+            edges.erase(std::remove(edges.begin(), edges.end(), edge), edges.end());
     }
 
     //Draw it
@@ -396,12 +397,6 @@ QSet <QPoint> Environment::create_material_line(int x0, int y0, int x1, int y1){
         return line;
 }
 
-/*
-template <Class T>
-int distance(T elem, T begin){
-    for ( auto )
-}
-*/
 
 void Environment::graph_init(){
     graph.clear();
@@ -440,18 +435,20 @@ void Environment::extend_graph(){
     using Delayn::Point;
     if ( pointsWrap.removeStartPoint ){
         // Add edge
-        pointsWrap.startEdge = Edge<float>( Point<float>( startPointNeig.x() , startPointNeig.y() ) , Point<float>( startPoint.x() , startPoint.y() ) );
-        edges.push_back(pointsWrap.startEdge);
+        //pointsWrap.startEdge = Edge<float>( Point<float>( startPointNeig.x() , startPointNeig.y() ) , Point<float>( startPoint.x() , startPoint.y() ) );
+        //edges.push_back(pointsWrap.startEdge);
         // Add point
         material_points.insert(startPoint);
     }
     if (pointsWrap.removeTargetPoint ){
         // Add edge
-        pointsWrap.targetEdge = Edge<float>( Point<float>( targetPointNeig.x() , targetPointNeig.y() ) , Point<float>( targetPoint.x() , targetPoint.y() ) );
-        edges.push_back(pointsWrap.targetEdge);
+        //pointsWrap.targetEdge = Edge<float>( Point<float>( targetPointNeig.x() , targetPointNeig.y() ) , Point<float>( targetPoint.x() , targetPoint.y() ) );
+        //edges.push_back(pointsWrap.targetEdge);
         // Add point
         material_points.insert(targetPoint);
     }
+    if ( pointsWrap.removeStartPoint  || pointsWrap.removeTargetPoint   )
+        triangulate();
 }
 
 void Environment::squeeze_graph(){
@@ -459,13 +456,13 @@ void Environment::squeeze_graph(){
         // Remove point
         material_points.remove(startPoint);
         // Remove edge
-        edges.erase( std::find( edges.begin() , edges.end() ,  pointsWrap.startEdge ) );
+        //edges.erase( std::find( edges.begin() , edges.end() ,  pointsWrap.startEdge ) );
     }
     if ( pointsWrap.removeTargetPoint ){
         // Remove point
         material_points.remove(targetPoint);
         // Remove edge
-        edges.erase( std::find( edges.begin() , edges.end() ,  pointsWrap.targetEdge ) );
+        //edges.erase( std::find( edges.begin() , edges.end() ,  pointsWrap.targetEdge ) );
     }
 
 }
@@ -480,17 +477,18 @@ QPoint Environment::get_nearest_point(QPoint newPoint){
     return res;
 
 }
+
 void Environment::mousePressEvent(QMouseEvent *ev){
     if (startPointSet){
         targetPoint = ev->pos();//get_nearest_point( ev->pos() );
         // If new edges not in obstacle
-        if( ! line_in_obstakle( create_material_line( startPoint , get_nearest_point(startPoint) ) ) &&
+     /*   if( ! line_in_obstakle( create_material_line( startPoint , get_nearest_point(startPoint) ) ) &&
             ! line_in_obstakle( create_material_line( targetPoint , get_nearest_point(targetPoint) ) ) )
-        {
+        { */
             extend_graph();
             Dijkstra();
             squeeze_graph();
-        }
+        //}
         startPointSet = false;
     }
     else{

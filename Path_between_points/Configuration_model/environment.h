@@ -59,8 +59,6 @@ private:
     struct TpointsWrap{
         bool removeStartPoint;
         bool removeTargetPoint;
-        Delayn::Edge<float> startEdge = Delayn::Edge<float>(Delayn::Point<float>(0,0),Delayn::Point<float>(0,0));
-        Delayn::Edge<float> targetEdge = Delayn::Edge<float>(Delayn::Point<float>(0,0),Delayn::Point<float>(0,0));
         TpointsWrap(){
             removeStartPoint = false;
             removeTargetPoint = false;
