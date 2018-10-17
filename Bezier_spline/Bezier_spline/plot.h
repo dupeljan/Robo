@@ -41,7 +41,8 @@ public:
     void generate_points_for_closed_spline();
     void createCloseCatmullRomSpline();
     void createBezierSpline();
-    void createCatmullRomSpline(bool closed = false);
+    void createCatmullRomSpline();
+    void createCatmullLoopRomSpline();
 private:
     Ui::Plot *ui;
     void insertStartTargetPoints(); // Insert start & target points in materialPoints

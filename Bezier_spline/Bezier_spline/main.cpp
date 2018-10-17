@@ -9,7 +9,7 @@ int main(int argc, char *argv[]){
     //p.generate_example_points_vect();
     p.generate_points_for_closed_spline();
     //p.createBezierSpline();
-    p.createCatmullRomSpline();
+    p.createCatmullLoopRomSpline();
     p.show();
 
     return a.exec();
