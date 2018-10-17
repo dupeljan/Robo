@@ -424,31 +424,28 @@ void Environment::compute_shortest_path(){
     }
 }
 
-void Environment::extend_graph(){
-    // Found nearlest points
-    QPoint startPointNeig = get_nearest_point(startPoint);
-    QPoint targetPointNeig = get_nearest_point(targetPoint);
-    // Inspect need to remove start/target points in future
-    pointsWrap.removeStartPoint = material_points.find(startPoint) == material_points.end();
-    pointsWrap.removeTargetPoint = material_points.find(targetPoint) == material_points.end();
-    using Delayn::Edge ;
-    using Delayn::Point;
-    if ( pointsWrap.removeStartPoint ){
-        // Add edge
-        //pointsWrap.startEdge = Edge<float>( Point<float>( startPointNeig.x() , startPointNeig.y() ) , Point<float>( startPoint.x() , startPoint.y() ) );
-        //edges.push_back(pointsWrap.startEdge);
-        // Add point
-        material_points.insert(startPoint);
-    }
-    if (pointsWrap.removeTargetPoint ){
-        // Add edge
-        //pointsWrap.targetEdge = Edge<float>( Point<float>( targetPointNeig.x() , targetPointNeig.y() ) , Point<float>( targetPoint.x() , targetPoint.y() ) );
-        //edges.push_back(pointsWrap.targetEdge);
-        // Add point
-        material_points.insert(targetPoint);
-    }
-    if ( pointsWrap.removeStartPoint  || pointsWrap.removeTargetPoint   )
-        triangulate();
+// True if we need to found path
+bool Environment::extend_graph(){
+    bool res = ! point_in_obstakle( startPoint ) && ! point_in_obstakle( targetPoint );
+    if ( res ){
+        // Inspect need to remove start/target points in future
+        pointsWrap.removeStartPoint = material_points.find(startPoint) == material_points.end();
+        pointsWrap.removeTargetPoint = material_points.find(targetPoint) == material_points.end();
+        if ( pointsWrap.removeStartPoint )
+            // Add point
+            material_points.insert(startPoint);
+
+        if (pointsWrap.removeTargetPoint )
+            // Add point
+            material_points.insert(targetPoint);
+
+        if ( pointsWrap.removeStartPoint  || pointsWrap.removeTargetPoint   )
+            triangulate();
+
+
+    } else
+        pointsWrap.removeStartPoint = pointsWrap.removeTargetPoint = false;
+    return res;
 }
 
 void Environment::squeeze_graph(){
@@ -485,8 +482,7 @@ void Environment::mousePressEvent(QMouseEvent *ev){
      /*   if( ! line_in_obstakle( create_material_line( startPoint , get_nearest_point(startPoint) ) ) &&
             ! line_in_obstakle( create_material_line( targetPoint , get_nearest_point(targetPoint) ) ) )
         { */
-            extend_graph();
-            Dijkstra();
+            if ( extend_graph() )  Dijkstra();
             squeeze_graph();
         //}
         startPointSet = false;
