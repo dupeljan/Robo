@@ -110,8 +110,8 @@ void Plot::generate_points_for_open_spline(){
         materialPoints.push_back( QPoint( x * scale ,   - scale * cos( x ) ) );
 
     std::for_each(materialPoints.begin() , materialPoints.end(), [](QPoint &p){ p.setX(p.x()  +xShift ); p.setY(p.y()   + yShift);} );
-    derPoints.PFirst = QPoint ( 1 , 0 ); // 1 , 0
-    derPoints.PLast = QPoint ( 1 , 0 ) ;
+    derPoints.PFirst = QPoint ( 100 , 0 ); // 1 , 0
+    derPoints.PLast = QPoint ( 100 , 0 );
 }
 
 void Plot::paintEvent(QPaintEvent *event){
