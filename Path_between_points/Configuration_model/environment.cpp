@@ -440,10 +440,12 @@ void Environment::compute_shortest_path(){
     shortest_path.clear();
     shortest_path.push_back( targetPoint );
     if ( graph[ distance(startPoint) ].neigbors.size() && graph[ distance(targetPoint) ].neigbors.size() ){
-        for( int i = 0; shortest_path[i] != startPoint ; i++ ){
+        for( int i = 0; shortest_path[i] != startPoint  &&  i <= graph.size() + 1 ; i++ ){
             int cur_point = graph[ std::distance(  material_points.begin() , material_points.find( shortest_path[i] )  )].parent;
             shortest_path.push_back( *next(material_points.begin(),cur_point) );
         }
+        if ( shortest_path.size() > graph.size())
+            shortest_path.clear();
     }
 }
 
