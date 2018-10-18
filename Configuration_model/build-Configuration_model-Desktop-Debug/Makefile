@@ -51,9 +51,11 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../../Path_between_points/Configuration_model/main.cpp \
-		../../Path_between_points/Configuration_model/environment.cpp moc_environment.cpp
+		../../Path_between_points/Configuration_model/environment.cpp \
+		../../Path_between_points/Configuration_model/crspline.cpp moc_environment.cpp
 OBJECTS       = main.o \
 		environment.o \
+		crspline.o \
 		moc_environment.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -129,8 +131,10 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		../../Path_between_points/Configuration_model/Configuration_model.pro ../../Path_between_points/Configuration_model/environment.h ../../Path_between_points/Configuration_model/main.cpp \
-		../../Path_between_points/Configuration_model/environment.cpp
+		../../Path_between_points/Configuration_model/Configuration_model.pro ../../Path_between_points/Configuration_model/environment.h \
+		../../Path_between_points/Configuration_model/crspline.h ../../Path_between_points/Configuration_model/main.cpp \
+		../../Path_between_points/Configuration_model/environment.cpp \
+		../../Path_between_points/Configuration_model/crspline.cpp
 QMAKE_TARGET  = Configuration_model
 DESTDIR       = 
 TARGET        = Configuration_model
@@ -314,8 +318,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Path_between_points/Configuration_model/environment.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Path_between_points/Configuration_model/main.cpp ../../Path_between_points/Configuration_model/environment.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Path_between_points/Configuration_model/environment.h ../../Path_between_points/Configuration_model/crspline.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Path_between_points/Configuration_model/main.cpp ../../Path_between_points/Configuration_model/environment.cpp ../../Path_between_points/Configuration_model/crspline.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../../Path_between_points/Configuration_model/environment.ui $(DISTDIR)/
 
 
@@ -384,6 +388,10 @@ environment.o: ../../Path_between_points/Configuration_model/environment.cpp ../
 		../../Path_between_points/Configuration_model/Delayn.h \
 		ui_environment.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o environment.o ../../Path_between_points/Configuration_model/environment.cpp
+
+crspline.o: ../../Path_between_points/Configuration_model/crspline.cpp ../../Path_between_points/Configuration_model/crspline.h \
+		../../Path_between_points/Configuration_model/matrixproc.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o crspline.o ../../Path_between_points/Configuration_model/crspline.cpp
 
 moc_environment.o: moc_environment.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_environment.o moc_environment.cpp

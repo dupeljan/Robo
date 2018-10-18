@@ -14,11 +14,11 @@ class CRSpline
     struct {
         QPoint PFirst, PLast;
     } derPoints;
-    QVector < QPoint > spline;
+    std::vector < QPoint > spline;
 public:
-    CRSpline( QPoint firstSpline , QPoint secondSpline );
-    void createCatmullRomSpline( QVector < QPoint > materialPoints );
-    QVector < QPoint > get_spline();
+    CRSpline( QPoint firstSpline , QPoint lastSpline );
+    void createCatmullRomSpline(std::vector<QPoint> materialPoints );
+    std::vector<QPoint> get_spline();
 };
 
 #endif // CRSPLINE_H

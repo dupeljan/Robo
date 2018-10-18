@@ -13,6 +13,7 @@
 #include <QTime>
 #include <set>
 #include "Delayn.h"
+#include "crspline.h"
 
 // Funct for using QSet<QPoint>
 inline uint qHash (const QPoint & key){
@@ -253,7 +254,7 @@ void Environment::Dijkstra(){
         //return 0;
     //}
         compute_shortest_path();
-        update();
+
 
 
 }
@@ -289,6 +290,12 @@ void Environment::paintEvent(QPaintEvent *event){
     myPen.setWidth(PATH_WIDHT);
     painter.setPen(myPen);
     painter.drawPolyline(shortest_path.data(), shortest_path.size());
+
+    // Draw spline
+    myPen.setColor(QColor(0,255,0));
+    myPen.setWidth(PATH_WIDHT);
+    painter.setPen(myPen);
+    painter.drawPolyline(spline.data(), spline.size());
 
 
 }
@@ -356,9 +363,22 @@ bool Environment::point_in_obstakle(QPoint p){
 bool Environment::line_in_obstakle(QSet<QPoint> s){
     //Obstacles must be computed!
     bool result = false;
-    for(QSet<QPoint>::iterator it = s.begin(); it != s.end() && !result; it++)
+    for( auto it = s.begin(); it != s.end() && !result; it++)
         result = ocupate_points.find(*it) != ocupate_points.end();
     return result;
+}
+
+Curve_report Environment::curve_in_obstakle(std::vector<QPoint> v){
+    //Obstacles must be computed!
+    bool result = false;
+    int i = 0;
+    for( auto it = v.begin(); it != v.end() && !result; it++){
+        result = ocupate_points.find(*it) != ocupate_points.end();
+        // if curve pooint = polygon knot
+        if ( std::find(shortest_path.begin() , shortest_path.end() , *it ) != shortest_path.end() )
+            i++;
+    }
+    return { result , i };
 }
 
 QSet <QPoint> Environment::create_material_line(int x0, int y0, int x1, int y1){
@@ -450,20 +470,30 @@ bool Environment::extend_graph(){
         pointsWrap.removeStartPoint = pointsWrap.removeTargetPoint = false;
     return res;
 }
+// true if curve not concern obstacles
+bool Environment::create_splain(){
+    CRSpline it(shortest_path[0],shortest_path[ shortest_path.size() - 1 ]);
+    it.createCatmullRomSpline(shortest_path);
+    spline = it.get_spline();
+    Curve_report rep = curve_in_obstakle(spline);
+    /*if ( rep.state ){
+        // Delete points
+        material_points.remove( shortest_path[ rep.pNumper ] );
+        triangulate();
+    } */
+    return true; //! rep.state;
 
+}
 void Environment::squeeze_graph(){
-    if ( pointsWrap.removeStartPoint ){
+    if ( pointsWrap.removeStartPoint )
         // Remove point
         material_points.remove(startPoint);
-        // Remove edge
-        //edges.erase( std::find( edges.begin() , edges.end() ,  pointsWrap.startEdge ) );
-    }
-    if ( pointsWrap.removeTargetPoint ){
+
+
+    if ( pointsWrap.removeTargetPoint )
         // Remove point
         material_points.remove(targetPoint);
-        // Remove edge
-        //edges.erase( std::find( edges.begin() , edges.end() ,  pointsWrap.targetEdge ) );
-    }
+
 
 }
 QPoint Environment::get_nearest_point(QPoint newPoint){
@@ -484,13 +514,15 @@ int Environment::distance(QPoint point){
 void Environment::mousePressEvent(QMouseEvent *ev){
     if (startPointSet){
         targetPoint = ev->pos();//get_nearest_point( ev->pos() );
-        // If new edges not in obstacle
-     /*   if( ! line_in_obstakle( create_material_line( startPoint , get_nearest_point(startPoint) ) ) &&
-            ! line_in_obstakle( create_material_line( targetPoint , get_nearest_point(targetPoint) ) ) )
-        { */
-            if ( extend_graph() )  Dijkstra();
-            squeeze_graph();
-        //}
+
+        if ( extend_graph() ){
+            do{
+                Dijkstra();
+            }while ( ! create_splain() );
+
+            update();
+        }
+        squeeze_graph();
         startPointSet = false;
     }
     else{

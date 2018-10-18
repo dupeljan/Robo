@@ -8,12 +8,12 @@
 #include <algorithm>
 #include "matrixproc.h"
 
-CRSpline::CRSpline( QPoint firstSpline , QPoint secondSpline ){
+CRSpline::CRSpline(QPoint firstSpline , QPoint lastSpline ){
     derPoints.PFirst = firstSpline;
-    derPoints.PLast = secondSpline;
+    derPoints.PLast = lastSpline;
 }
 
-void CRSpline::createCatmullRomSpline(QVector < QPoint > materialPoints){
+void CRSpline::createCatmullRomSpline(std::vector < QPoint > materialPoints){
     //First spline
    const std::vector < std::vector < double > > CFirst={ { 0 , 2 , 0 , 0 } ,
                                                          { 2 , 0 , 0 , 0 } ,
@@ -58,6 +58,6 @@ void CRSpline::createCatmullRomSpline(QVector < QPoint > materialPoints){
     }
 }
 
-QVector < QPoint > CRSpline::get_spline(){
+std::vector < QPoint > CRSpline::get_spline(){
     return spline;
 }
