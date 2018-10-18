@@ -432,7 +432,8 @@ void Environment::graph_init(){
     for ( auto ver : graph)
         ver.color = not_visited;
 }
-
+// Cycled here when graph not connect
+// Cecled here when we retreangulate
 void Environment::compute_shortest_path(){
     // Get point N rand_number from free_set
     //QPoint cur_point = *next(material_points.begin(),number);
@@ -472,16 +473,17 @@ bool Environment::extend_graph(){
 }
 // true if curve not concern obstacles
 bool Environment::create_splain(){
-    CRSpline it(shortest_path[0],shortest_path[ shortest_path.size() - 1 ]);
+    CRSpline it(QPoint(1,0),QPoint(1,0));
     it.createCatmullRomSpline(shortest_path);
     spline = it.get_spline();
     Curve_report rep = curve_in_obstakle(spline);
-    /*if ( rep.state ){
+    if ( rep.state ){
         // Delete points
         material_points.remove( shortest_path[ rep.pNumper ] );
         triangulate();
-    } */
-    return true; //! rep.state;
+        update();
+    }
+    return ! rep.state;
 
 }
 void Environment::squeeze_graph(){
