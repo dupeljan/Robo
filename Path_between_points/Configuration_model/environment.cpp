@@ -478,14 +478,14 @@ bool Environment::create_splain(){
     CRSpline it(QPoint(1,0),QPoint(1,0));
     it.createCatmullRomSpline(shortest_path);
     spline = it.get_spline();
-    Curve_report rep = curve_in_obstakle(spline);
+   /* Curve_report rep = curve_in_obstakle(spline);
     if ( rep.state ){
         // Delete points
         material_points.remove( shortest_path[ rep.pNumper ] );
         triangulate();
         update();
-    }
-    return ! rep.state;
+    } */
+    return true;//! rep.state;
 
 }
 void Environment::squeeze_graph(){
