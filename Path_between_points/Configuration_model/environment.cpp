@@ -372,13 +372,14 @@ Curve_report Environment::curve_in_obstakle(std::vector<QPoint> v){
     //Obstacles must be computed!
     bool result = false;
     int i = 0;
-    for( auto it = v.begin(); it != v.end() && !result; it++){
+    std::vector<QPoint>::iterator it;
+    for( it = v.begin(); it != v.end() && !result; it++)
         result = ocupate_points.find(*it) != ocupate_points.end();
         // if curve pooint = polygon knot
-        if ( std::find(shortest_path.begin() , shortest_path.end() , *it ) != shortest_path.end() )
-            i++;
-    }
-    return { result , i };
+        // error here
+
+
+    return { result , get_nearest_point ( *it , shortest_path ) };
 }
 
 QSet <QPoint> Environment::create_material_line(int x0, int y0, int x1, int y1){
@@ -432,8 +433,7 @@ void Environment::graph_init(){
     for ( auto ver : graph)
         ver.color = not_visited;
 }
-// Cycled here when graph not connect
-// Cecled here when we retreangulate
+
 void Environment::compute_shortest_path(){
     // Get point N rand_number from free_set
     //QPoint cur_point = *next(material_points.begin(),number);
@@ -475,15 +475,15 @@ bool Environment::extend_graph(){
 }
 // true if curve not concern obstacles
 bool Environment::create_splain(){
-    CRSpline it(QPoint(1,0),QPoint(1,0));
+    CRSpline it(shortest_path[1] - shortest_path[0], shortest_path[shortest_path.size() - 1] - shortest_path[ shortest_path.size() - 2 ]);
     it.createCatmullRomSpline(shortest_path);
     spline = it.get_spline();
     Curve_report rep = curve_in_obstakle(spline);
     if ( rep.state ){
         // Delete points
-        material_points.remove( shortest_path[ rep.pNumper ] );
+        material_points.remove( rep.badPoint );
         triangulate();
-        update();
+
     }
     return ! rep.state;
 
@@ -502,8 +502,20 @@ void Environment::squeeze_graph(){
 }
 QPoint Environment::get_nearest_point(QPoint newPoint){
     QPoint res ;
-    int minLen = SCR_LEN_X;
+    int minLen = SCR_LEN_X * SCR_LEN_Y;
     for ( auto point : material_points )
+        if ( length(point,newPoint) < minLen ){
+            minLen = length(point,newPoint) ;
+            res = point;
+        }
+    return res;
+
+}
+
+QPoint Environment::get_nearest_point(QPoint newPoint , std::vector < QPoint > source ){
+    QPoint res ;
+    int minLen = SCR_LEN_X * SCR_LEN_Y;
+    for ( auto point : source )
         if ( length(point,newPoint) < minLen ){
             minLen = length(point,newPoint) ;
             res = point;

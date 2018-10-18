@@ -40,7 +40,7 @@ struct vertex //Вершина
 
 struct Curve_report{
     bool state;
-    int pNumper;
+    QPoint badPoint;
 };
 class Environment : public QWidget
 {
@@ -90,7 +90,10 @@ private:
     QSet<QPoint> create_filled_circle(QPoint centre, int radius);
     QSet<QPoint> create_material_line(int x0, int y0, int x1, int y1);
     QSet<QPoint> create_material_line (QPoint a , QPoint b ){ return create_material_line( a.x() , a.y() , b.x() , b.y() );}
+
     QPoint get_nearest_point(QPoint newPoint);
+    QPoint get_nearest_point(QPoint newPoint, std::vector < QPoint>  source);
+
     bool point_in_obstakle(QPoint p);
     bool line_in_obstakle(QSet <QPoint> s);
     Curve_report curve_in_obstakle(std::vector < QPoint > v);
