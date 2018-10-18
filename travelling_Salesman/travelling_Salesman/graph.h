@@ -33,6 +33,7 @@ private:
  int path_len;
  std::vector < std::vector < int > > adjacency_matrix ;
  int Colors[POINTS_COUNTS];
+ int n;  // Counts of points
  int firstPoint;
 public:
     explicit graph(QWidget *parent = 0);
